@@ -32,7 +32,7 @@ export function MetricTable({ metrics }: { metrics: Metric[] }) {
           {metrics.map((metric) => (
             <tr
               key={metric.id}
-              onClick={() => router.push(`/metrics/${metric.id}`)}
+              onClick={() => router.push(`/metrics/${metric.id}?grain=daily&range=30`)}
               className="group transition-colors hover:bg-gray-50/90 dark:hover:bg-gray-700/10"
             >
               {/* 1. Name & Description */}
