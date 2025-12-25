@@ -1,6 +1,7 @@
 import { mockMetrics } from '@/lib/data/mock-data';
 import { MetricTable } from '@/app/components/insights/MetricTable';
 import { Plus } from 'lucide-react';
+import { SummaryCards } from '@/app/components/insights/SummaryCards';
 
 export default function MetricsPage() {
   return (
@@ -14,6 +15,8 @@ export default function MetricsPage() {
           </p>
         </div>
       </div>
+
+      <SummaryCards metrics={mockMetrics} />
 
       {/* Table Component */}
       <div className="overflow-hidden rounded-xl border shadow-sm">

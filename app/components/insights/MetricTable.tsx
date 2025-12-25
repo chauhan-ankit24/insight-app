@@ -1,8 +1,13 @@
+'use client';
+
+import { useRouter } from 'next/navigation';
 import { formatCurrency, formatNumberCompact, formatPercentage } from '@/lib/utils/formatters';
 import { Sparkline } from './Sparkline';
 import { Metric } from '@/lib/types/metrics';
 
 export function MetricTable({ metrics }: { metrics: Metric[] }) {
+  const router = useRouter();
+
   const statusColors = {
     healthy: 'bg-green-500',
     warning: 'bg-yellow-500',
@@ -27,6 +32,7 @@ export function MetricTable({ metrics }: { metrics: Metric[] }) {
           {metrics.map((metric) => (
             <tr
               key={metric.id}
+              onClick={() => router.push(`/metrics/${metric.id}`)}
               className="group transition-colors hover:bg-gray-50/90 dark:hover:bg-gray-700/10"
             >
               {/* 1. Name & Description */}
