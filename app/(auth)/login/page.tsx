@@ -1,15 +1,24 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '../../contexts/AuthContext';
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
   const [password, setPassword] = useState('');
+  const { login, isAuthenticated } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push('/metrics');
+    }
+  }, [isAuthenticated, router]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle login logic here
-    console.log('Login attempt:', { email, password });
+    login(name, password);
   };
 
   return (
@@ -23,18 +32,18 @@ export default function LoginPage() {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="-space-y-px rounded-md shadow-sm">
             <div>
-              <label htmlFor="email" className="sr-only">
-                Email address
+              <label htmlFor="name" className="sr-only">
+                Name
               </label>
               <input
-                id="email"
-                name="email"
-                type="email"
+                id="name"
+                name="name"
+                type="text"
                 required
                 className="relative block w-full appearance-none rounded-none rounded-t-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-                placeholder="Email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
               />
             </div>
             <div>

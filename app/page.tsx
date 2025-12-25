@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { ThemeToggle } from '@/app/components/ThemeToggle';
 
 export default function Home() {
   return (
@@ -18,7 +17,6 @@ export default function Home() {
           >
             View Metrics
           </Link>
-          <ThemeToggle />
         </div>
       </div>
     </div>
