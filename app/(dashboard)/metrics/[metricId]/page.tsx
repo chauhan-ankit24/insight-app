@@ -64,7 +64,7 @@ export default function MetricDetailPage() {
             </div>
             <div className="flex justify-between">
               <span className="font-medium">Last Updated:</span>
-              <span>{formatDate(metric.lastUpdated)}</span>
+              {/* <span>{formatDate(metric.lastUpdated)}</span> */}
             </div>
           </div>
         </div>

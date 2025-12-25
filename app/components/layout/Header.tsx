@@ -7,7 +7,7 @@ export function Header() {
   const { userName, logout } = useAuth();
 
   return (
-    <header className="flex items-center justify-between border-b bg-white p-4 dark:bg-gray-800">
+    <header className="bg-foreground flex items-center justify-between border-b">
       <div className="flex items-center space-x-4">
         <h1 className="text-xl font-bold">Insight App</h1>
         {userName && <span className="text-gray-600 dark:text-gray-300">Welcome, {userName}!</span>}

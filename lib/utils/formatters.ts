@@ -16,3 +16,11 @@ export function formatDate(date: Date): string {
 export function formatPercentage(value: number): string {
   return `${value.toFixed(2)}%`;
 }
+
+export const formatNumberCompact = (value: number): string => {
+  return new Intl.NumberFormat('en-US', {
+    notation: 'compact',
+    compactDisplay: 'short',
+    maximumFractionDigits: 1,
+  }).format(value);
+};

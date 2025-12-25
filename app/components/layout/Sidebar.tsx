@@ -12,7 +12,7 @@ export function Sidebar() {
   ];
 
   return (
-    <aside className="w-64 bg-gray-100 p-4 dark:bg-gray-800">
+    <aside className="bg-foreground w-64 border-r p-4">
       <nav className="space-y-2">
         {menuItems.map((item) => (
           <Link
