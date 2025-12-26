@@ -24,6 +24,18 @@
     --muted-foreground: 215.4 16.3% 46.9%;
     --border: 214.3 31.8% 91.4%;
 
+    /* Success - Emerald Green (Balanced and fresh) */
+    --success: 142 70% 45%;
+    --success-foreground: 142 70% 95%;
+
+    /* Warning - Amber Gold (Avoids the "dirty" look of standard yellow) */
+    --warning: 38 92% 50%;
+    --warning-foreground: 38 92% 5%;
+
+    /* Destructive - Rose Red (Modern and professional, not "angry") */
+    --destructive: 346 84% 61%;
+    --destructive-foreground: 346 84% 98%;
+
     --button-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.15);
     --button-shadow-hover: 0 8px 20px -6px rgba(0, 0, 0, 0.3);
   }
@@ -40,6 +52,10 @@
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
     --border: 217.2 32.6% 17.5%;
+
+    --success: 142 70% 55%;
+    --warning: 48 96% 53%;
+    --destructive: 346 84% 65%;
 
     --button-shadow: 0 4px 12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1);
     --button-shadow-hover: 0 0 15px rgba(255, 255, 255, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.2);

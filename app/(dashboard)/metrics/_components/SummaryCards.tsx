@@ -3,33 +3,62 @@
 import { Metric } from '@/lib/types/metrics';
 import { formatCurrency, formatNumberCompact } from '@/lib/utils/formatters';
 import { ArrowUpRight, ArrowDownRight, Minus } from 'lucide-react';
-import { MicroTrendChart } from './MicroTrendChart'; // Reusing your existing component
+import { MicroTrendChart } from './MicroTrendChart';
+import { useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 
 export function SummaryCards({ metrics }: { metrics: Metric[] }) {
-  // We only show the top 3 high-level metrics in the summary
-  const summaryData = metrics.slice(0, 3);
+  const router = useRouter();
+
+  const summaryData = useMemo(() => {
+    if (!metrics || metrics.length === 0) return [];
+
+    const healthyMetric = metrics
+      .filter((m) => m.status === 'healthy')
+      .sort((a, b) => b.changePercent - a.changePercent)[0];
+
+    const criticalMetric = metrics
+      .filter((m) => m.status === 'critical')
+      .sort((a, b) => a.changePercent - b.changePercent)[0];
+
+    const warningMetric = metrics
+      .filter((m) => m.status === 'warning')
+      .sort((a, b) => Math.abs(b.changePercent) - Math.abs(a.changePercent))[0];
+
+    const results = [];
+    if (healthyMetric) results.push({ ...healthyMetric, summaryLabel: 'Best Performer' });
+    if (criticalMetric) results.push({ ...criticalMetric, summaryLabel: 'Action Required' });
+    if (warningMetric) results.push({ ...warningMetric, summaryLabel: 'Needs Attention' });
+
+    if (results.length < 3) {
+      const usedIds = results.map((r) => r.id);
+      const remaining = metrics.filter((m) => !usedIds.includes(m.id));
+      results.push(...remaining.slice(0, 3 - results.length));
+    }
+
+    return results.slice(0, 3);
+  }, [metrics]);
 
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
       {summaryData.map((metric) => {
-        // Trend-based styling for the glass cards
         const styles = {
           up: {
-            bg: 'bg-emerald-500/5 dark:bg-emerald-500/10',
-            border: 'border-emerald-500/20',
-            text: 'text-emerald-600 dark:text-emerald-400',
+            bg: 'bg-success/10',
+            border: 'border-success',
+            text: 'text-success',
             icon: <ArrowUpRight className="h-4 w-4" />,
           },
           down: {
-            bg: 'bg-rose-500/5 dark:bg-rose-500/10',
-            border: 'border-rose-500/20',
-            text: 'text-rose-600 dark:text-rose-400',
+            bg: 'bg-destructive/10',
+            border: 'border-destructive',
+            text: 'text-destructive',
             icon: <ArrowDownRight className="h-4 w-4" />,
           },
           neutral: {
-            bg: 'bg-slate-500/5 dark:bg-slate-500/10',
-            border: 'border-slate-500/20',
-            text: 'text-slate-600 dark:text-slate-400',
+            bg: 'bg-warning/10',
+            border: 'border-warning',
+            text: 'text-warning',
             icon: <Minus className="h-4 w-4" />,
           },
         }[metric.trend || 'neutral'];
@@ -37,7 +66,8 @@ export function SummaryCards({ metrics }: { metrics: Metric[] }) {
         return (
           <div
             key={metric.id}
-            className={`group relative flex flex-col justify-between overflow-hidden rounded-3xl border p-5 shadow-sm transition-all hover:scale-[1.01] hover:shadow-md ${styles.bg} ${styles.border}`}
+            onClick={() => router.push(`/metrics/${metric.id}?grain=daily&range=30`)}
+            className={`group relative flex cursor-pointer flex-col justify-between overflow-hidden rounded-3xl border p-5 shadow-sm transition-all hover:scale-[1.01] hover:shadow-md ${styles.bg} ${styles.border}`}
           >
             <div className="relative z-10 space-y-4">
               {/* Header: Label and Percentage Pill */}
@@ -56,7 +86,7 @@ export function SummaryCards({ metrics }: { metrics: Metric[] }) {
               {/* Middle: Primary Value */}
               <div className="flex w-full flex-wrap justify-between gap-2">
                 <div>
-                  <h3 className="text-foreground text-3xl font-black tracking-tight">
+                  <h3 className="text-3xl font-black tracking-tight text-foreground">
                     {metric.unit === 'USD'
                       ? formatCurrency(metric.value)
                       : formatNumberCompact(metric.value)}
