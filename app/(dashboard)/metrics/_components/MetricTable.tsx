@@ -2,12 +2,12 @@
 
 import { useRouter } from 'next/navigation';
 import { formatCurrency, formatNumberCompact, formatPercentage } from '@/lib/utils/formatters';
-import { Sparkline } from './Sparkline';
 import { Metric } from '@/lib/types/metrics';
-import { ChevronRight } from 'lucide-react';
+import { MicroTrendChart } from './MicroTrendChart';
 
 export function MetricTable({ metrics }: { metrics: Metric[] }) {
   const router = useRouter();
+  console.log('main', metrics);
 
   const statusConfig = {
     healthy: { bg: 'bg-green-500', ring: 'ring-green-500/20', text: 'Healthy' },
@@ -28,7 +28,6 @@ export function MetricTable({ metrics }: { metrics: Metric[] }) {
               <th className="px-6 py-4">Trend (7d)</th>
               <th className="px-6 py-4 text-right">Change</th>
               <th className="px-6 py-4">Category</th>
-              <th className="px-6 py-4 text-right"></th>
             </tr>
           </thead>
           <tbody className="divide-y border-t-0">
@@ -75,7 +74,12 @@ export function MetricTable({ metrics }: { metrics: Metric[] }) {
                 {/* 4. Sparkline */}
                 <td className="min-w-[120px] px-6 py-4">
                   <div className="h-8 w-full opacity-80 transition-opacity group-hover:opacity-100">
-                    <Sparkline data={metric.sparklineData} trend={metric.trend} />
+                    <div className="flex items-center justify-center opacity-70 transition-all group-hover:scale-105 group-hover:opacity-100">
+                      <MicroTrendChart
+                        data={metric.trendData.map((d) => ({ value: d.value }))}
+                        status={metric.status}
+                      />
+                    </div>
                   </div>
                 </td>
 
@@ -98,11 +102,6 @@ export function MetricTable({ metrics }: { metrics: Metric[] }) {
                   <span className="bg-secondary/50 text-muted-foreground inline-flex items-center rounded-md border px-2 py-0.5 text-[10px] font-bold uppercase tracking-tight">
                     {metric.category || 'General'}
                   </span>
-                </td>
-
-                {/* 7. Action Icon */}
-                <td className="px-6 py-4 text-right">
-                  <ChevronRight className="text-muted-foreground ml-auto h-4 w-4 opacity-0 transition-all group-hover:translate-x-1 group-hover:opacity-100" />
                 </td>
               </tr>
             ))}

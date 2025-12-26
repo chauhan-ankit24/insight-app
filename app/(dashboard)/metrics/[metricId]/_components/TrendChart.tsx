@@ -19,7 +19,9 @@ interface TrendPoint {
 }
 
 export function TrendChart({ data }: { data: TrendPoint[] }) {
+  console.log('Chart Data:', data);
   const chartData = useMemo(() => data, [data]);
+  const isHighDensity = data.length > 20;
 
   const stats = useMemo(() => {
     if (data.length === 0) return { avg: 0, isPositive: true };
@@ -31,6 +33,7 @@ export function TrendChart({ data }: { data: TrendPoint[] }) {
   const brandColor = stats.isPositive ? '#22c55e' : '#ef4444';
 
   if (!data || data.length === 0) return null;
+  console.log(data);
 
   return (
     <div className="h-[350px] w-full">
@@ -52,20 +55,37 @@ export function TrendChart({ data }: { data: TrendPoint[] }) {
           />
 
           <XAxis
-            dataKey="date"
+            dataKey="date" // MUST match the key in your data object
             axisLine={false}
             tickLine={false}
-            tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
+            interval={'preserveStartEnd'}
+            padding={{ left: 15, right: 15 }}
+            tick={{ fontSize: 10, fill: 'currentColor', opacity: 0.6 }}
             dy={10}
+            tickFormatter={(str) => {
+              // Try/Catch prevents the whole chart from crashing if a date is weird
+              try {
+                const date = new Date(str);
+                if (isNaN(date.getTime())) return str; // Return "Week 1" etc. if not a date
+                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+              } catch {
+                return str;
+              }
+            }}
           />
-
           <YAxis
             axisLine={false}
             tickLine={false}
-            tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
+            tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))', fontWeight: 500 }}
             domain={[0, (dataMax: number) => Math.max(dataMax, stats.avg) * 1.2]}
+            tickFormatter={(value) => {
+              if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M`;
+              if (value >= 1000) return `${(value / 1000).toFixed(0)}K`;
+              return value;
+            }}
+            width={50}
+            allowDecimals={false}
           />
-
           <Tooltip
             cursor={{ stroke: brandColor, strokeWidth: 2, strokeDasharray: '6 6' }}
             content={({ active, payload, label }) => {
@@ -93,13 +113,22 @@ export function TrendChart({ data }: { data: TrendPoint[] }) {
             strokeWidth={3}
             fill="url(#dynamicGradient)"
             animationDuration={2000}
-            activeDot={{ r: 8, strokeWidth: 4, stroke: 'hsl(var(--background))', fill: brandColor }}
+            dot={isHighDensity ? false : { r: 4, fill: brandColor, strokeWidth: 2 }}
+            activeDot={{
+              r: 7,
+              strokeWidth: 0,
+              fill: brandColor,
+            }}
           />
 
           {/* 2. LAYER 2: The ReferenceLine (Rendered last = Top) */}
           <ReferenceLine y={stats.avg} stroke="#94a3b8" strokeDasharray="8 4" strokeWidth={2}>
             <Label
-              value={`AVG: ${stats.avg.toFixed(0)}`}
+              value={`AVG: ${
+                stats.avg >= 1000000
+                  ? (stats.avg / 1000000).toFixed(1) + 'M'
+                  : stats.avg.toLocaleString()
+              }`}
               position="right"
               fill="#64748b"
               fontSize={10}

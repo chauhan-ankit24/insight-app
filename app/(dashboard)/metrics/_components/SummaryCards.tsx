@@ -1,96 +1,81 @@
 'use client';
 
-import { AreaChart, Area, ResponsiveContainer, YAxis } from 'recharts';
 import { Metric } from '@/lib/types/metrics';
 import { formatCurrency, formatNumberCompact } from '@/lib/utils/formatters';
 import { ArrowUpRight, ArrowDownRight, Minus } from 'lucide-react';
+import { MicroTrendChart } from './MicroTrendChart'; // Reusing your existing component
 
 export function SummaryCards({ metrics }: { metrics: Metric[] }) {
+  // We only show the top 3 high-level metrics in the summary
   const summaryData = metrics.slice(0, 3);
 
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
       {summaryData.map((metric) => {
-        // Define Glass Colors based on Trend
+        // Trend-based styling for the glass cards
         const styles = {
           up: {
-            bg: 'bg-emerald-500/10 dark:bg-emerald-500/20',
+            bg: 'bg-emerald-500/5 dark:bg-emerald-500/10',
             border: 'border-emerald-500/20',
-            text: 'text-emerald-700 dark:text-emerald-400',
-            chart: '#10b981',
-            icon: <ArrowUpRight className="h-3 w-3" />,
+            text: 'text-emerald-600 dark:text-emerald-400',
+            icon: <ArrowUpRight className="h-4 w-4" />,
           },
           down: {
-            bg: 'bg-rose-500/10 dark:bg-rose-500/20',
+            bg: 'bg-rose-500/5 dark:bg-rose-500/10',
             border: 'border-rose-500/20',
-            text: 'text-rose-700 dark:text-rose-400',
-            chart: '#f43f5e',
-            icon: <ArrowDownRight className="h-3 w-3" />,
+            text: 'text-rose-600 dark:text-rose-400',
+            icon: <ArrowDownRight className="h-4 w-4" />,
           },
           neutral: {
-            bg: 'bg-slate-500/10 dark:bg-slate-500/20',
+            bg: 'bg-slate-500/5 dark:bg-slate-500/10',
             border: 'border-slate-500/20',
-            text: 'text-slate-700 dark:text-slate-400',
-            chart: '#94a3b8',
-            icon: <Minus className="h-3 w-3" />,
+            text: 'text-slate-600 dark:text-slate-400',
+            icon: <Minus className="h-4 w-4" />,
           },
         }[metric.trend || 'neutral'];
-
-        const chartData = metric.sparklineData.map((val) => ({ value: val }));
 
         return (
           <div
             key={metric.id}
-            className={`group relative flex items-center justify-between gap-2 rounded-2xl border p-4 shadow-sm backdrop-blur-md transition-all hover:scale-[1.02] ${styles.bg} ${styles.border}`}
+            className={`group relative flex flex-col justify-between overflow-hidden rounded-3xl border p-5 shadow-sm transition-all hover:scale-[1.01] hover:shadow-md ${styles.bg} ${styles.border}`}
           >
-            {/* Left Section: Metric Data */}
-            <div className="z-10 flex flex-col gap-1">
-              <span
-                className={`text-[10px] font-bold uppercase tracking-widest opacity-80 ${styles.text}`}
-              >
-                {metric.name}
-              </span>
-
-              <div className="flex items-baseline gap-1.5">
-                <h3 className="text-foreground text-xl font-black tabular-nums">
-                  {metric.unit === 'USD'
-                    ? formatCurrency(metric.value)
-                    : formatNumberCompact(metric.value)}
-                </h3>
+            <div className="relative z-10 space-y-4">
+              {/* Header: Label and Percentage Pill */}
+              <div className="flex items-start justify-between">
+                <span className="text-muted-foreground/70 text-[11px] font-bold uppercase tracking-widest">
+                  {metric.name}
+                </span>
+                <div
+                  className={`flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-black ${styles.bg} ${styles.text} ${styles.border}`}
+                >
+                  {styles.icon}
+                  {Math.abs(metric.changePercent)}%
+                </div>
               </div>
 
-              <div className={`flex items-center gap-1 text-[11px] font-bold ${styles.text}`}>
-                {styles.icon}
-                <span>{metric.changePercent}%</span>
-              </div>
-            </div>
-
-            {/* Right Section: Recharts Sparkline */}
-            <div className="h-14 w-full flex-1 shrink-0 overflow-hidden">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={chartData} margin={{ top: 5, right: 0, left: 0, bottom: 5 }}>
-                  <defs>
-                    <linearGradient id={`gradient-${metric.id}`} x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor={styles.chart} stopOpacity={0.4} />
-                      <stop offset="95%" stopColor={styles.chart} stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <YAxis hide domain={['dataMin - 5', 'dataMax + 5']} />
-                  <Area
-                    type="monotone"
-                    dataKey="value"
-                    stroke={styles.chart}
-                    strokeWidth={2.5}
-                    fill={`url(#gradient-${metric.id})`}
-                    animationDuration={1500}
-                    isAnimationActive={true}
+              {/* Middle: Primary Value */}
+              <div className="flex w-full flex-wrap justify-between gap-2">
+                <div>
+                  <h3 className="text-foreground text-3xl font-black tracking-tight">
+                    {metric.unit === 'USD'
+                      ? formatCurrency(metric.value)
+                      : formatNumberCompact(metric.value)}
+                  </h3>
+                  <p className="text-muted-foreground/60 mt-1 text-[10px] font-bold uppercase tracking-tighter">
+                    Current Performance
+                  </p>
+                </div>
+                <div className="mt-4 flex-1">
+                  <MicroTrendChart
+                    data={metric.trendData.map((d) => ({ value: d.value }))}
+                    status={metric.status}
                   />
-                </AreaChart>
-              </ResponsiveContainer>
+                </div>
+              </div>
             </div>
 
-            {/* Decorative Inner Glow for Glass Effect */}
-            <div className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-br from-white/20 to-transparent" />
+            {/* Decorative Glass Overlay */}
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent opacity-50" />
           </div>
         );
       })}

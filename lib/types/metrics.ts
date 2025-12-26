@@ -1,3 +1,8 @@
+export type ContributorSnapshot = {
+  timestamp: string;
+  [key: string]: string | number;
+};
+
 export interface Metric {
   id: string;
   name: string;
@@ -12,12 +17,13 @@ export interface Metric {
   trend: 'up' | 'down' | 'neutral';
   sparklineData: number[];
   contributorKeys: string[];
-  contributorsData: { [key: string]: number | string }[];
+  contributorsData: ContributorSnapshot[];
+  trendData: { date: Date; value: number }[];
 }
 
 export interface MetricTrend {
   metricId: string;
-  data: { date: Date; value: number }[];
+  data: { date: string; value: number }[];
 }
 export interface MetricTrendPoint {
   date: string; // ISO string for sorting/formatting

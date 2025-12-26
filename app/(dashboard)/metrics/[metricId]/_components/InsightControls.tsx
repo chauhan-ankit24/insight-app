@@ -12,9 +12,29 @@ export function InsightControls() {
 
   const handleUpdate = (key: string, value: string) => {
     const params = new URLSearchParams(searchParams.toString());
-    params.set(key, value);
-    // Push updates to URL; Next.js re-runs Server Component (page.tsx) automatically
+
+    if (key === 'range') {
+      params.set('range', value);
+      const rangeInt = parseInt(value);
+
+      if (rangeInt <= 7 && (currentGrain === 'weekly' || currentGrain === 'monthly')) {
+        params.set('grain', 'daily');
+      }
+      if (rangeInt <= 30 && currentGrain === 'monthly') {
+        params.set('grain', 'daily');
+      }
+    } else {
+      params.set(key, value);
+    }
+
     router.push(`?${params.toString()}`, { scroll: false });
+  };
+
+  const isGrainDisabled = (grainId: string) => {
+    const rangeInt = parseInt(currentRange);
+    if (rangeInt <= 7 && (grainId === 'weekly' || grainId === 'monthly')) return true;
+    if (rangeInt <= 30 && grainId === 'monthly') return true;
+    return false;
   };
 
   const grains = [
@@ -38,19 +58,23 @@ export function InsightControls() {
           Frequency
         </label>
         <div className="bg-secondary/50 border-border/50 flex rounded-xl border p-1 backdrop-blur-sm">
-          {grains.map((g) => (
-            <button
-              key={g.id}
-              onClick={() => handleUpdate('grain', g.id)}
-              className={`relative rounded-lg px-4 py-1.5 text-xs font-semibold transition-all duration-200 ${
-                currentGrain === g.id
-                  ? 'bg-background text-primary shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-background/50'
-              }`}
-            >
-              {g.label}
-            </button>
-          ))}
+          {grains.map((g) => {
+            const disabled = isGrainDisabled(g.id);
+            return (
+              <button
+                key={g.id}
+                disabled={disabled}
+                onClick={() => handleUpdate('grain', g.id)}
+                className={`relative rounded-lg px-4 py-1.5 text-xs font-semibold transition-all duration-200 ${
+                  currentGrain === g.id
+                    ? 'bg-background text-primary shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground'
+                } ${disabled ? 'cursor-not-allowed opacity-30' : 'hover:bg-background/50'}`}
+              >
+                {g.label}
+              </button>
+            );
+          })}
         </div>
       </div>
 

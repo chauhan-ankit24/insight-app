@@ -1,4 +1,3 @@
-// 1. REMOVE 'use client' FROM HERE
 import Link from 'next/link';
 import { getMetricById, getMetricTrend } from '@/lib/data/resolvers';
 import { InsightControls } from './_components/InsightControls';
@@ -6,7 +5,6 @@ import { TrendChart } from './_components/TrendChart';
 import { ContributorsChart } from './_components/ContributorsChart';
 import { ChevronLeft, Tag, Folder } from 'lucide-react';
 
-// This is a Server Component, so it CAN be async
 export default async function MetricDetailPage({
   params,
   searchParams,
@@ -27,6 +25,23 @@ export default async function MetricDetailPage({
 
   if (!metric) return <div>Metric Not Found</div>;
 
+  // Get all historical contributor data (e.g., 90 days)
+  const allContributors = metric.contributorsData;
+
+  // Filter based on Range
+  let displayContributors = [];
+
+  if (range <= 7) {
+    // Show last 7 days - 7 bars total
+    displayContributors = allContributors.slice(-7);
+  } else if (range <= 30) {
+    // Show last 30 days, but perhaps pick every 3rd day to keep 10 clean bars
+    displayContributors = allContributors.slice(-30).filter((_, i) => i % 3 === 0);
+  } else {
+    // Show last 90 days, pick every 7th day (Weekly view) - ~12 clean bars
+    displayContributors = allContributors.slice(-90).filter((_, i) => i % 7 === 0);
+  }
+
   const statusStyles = {
     healthy: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20',
     warning: 'bg-amber-500/10 text-amber-600 border-amber-500/20',
@@ -38,19 +53,21 @@ export default async function MetricDetailPage({
       <div className="space-y-6">
         <Link
           href="/metrics"
-          className="text-muted-foreground hover:text-primary inline-flex items-center gap-1 text-sm font-medium"
+          className="text-muted-foreground hover:text-primary inline-flex items-center gap-1 text-sm font-medium transition-colors"
         >
           <ChevronLeft className="h-4 w-4" /> Back to Metrics
         </Link>
 
         <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-          <div className="space-y-3">
+          <div className="space-y-4">
             <div className="flex items-center gap-3">
               <h1 className="text-foreground text-4xl font-black uppercase tracking-tight">
                 {metric.name}
               </h1>
               <span
-                className={`rounded-full border px-2.5 py-0.5 text-[10px] font-bold uppercase ${statusStyles[metric.status as keyof typeof statusStyles]}`}
+                className={`rounded-full border px-2.5 py-0.5 text-[10px] font-bold uppercase ${
+                  statusStyles[metric.status as keyof typeof statusStyles]
+                }`}
               >
                 {metric.status}
               </span>
@@ -71,28 +88,45 @@ export default async function MetricDetailPage({
                 </span>
               </div>
             </div>
-            <p className="text-muted-foreground max-w-2xl text-base">{metric.description}</p>
+
+            <p className="text-muted-foreground max-w-2xl text-base leading-relaxed">
+              {metric.description}
+            </p>
           </div>
 
           <div className="shrink-0">
-            <div className="bg-card/50 border-border inline-block rounded-2xl border p-2 shadow-sm backdrop-blur-sm">
-              {/* This child component MUST have 'use client' */}
-              <InsightControls />
-            </div>
+            <InsightControls />
           </div>
         </div>
       </div>
 
+      {/* CHARTS SECTION */}
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+        {/* Main Performance Trend */}
         <div className="bg-card border-border rounded-3xl border p-6 lg:col-span-2">
+          <div className="mb-4">
+            <h3 className="text-muted-foreground/80 text-sm font-bold uppercase tracking-widest">
+              Performance Trend
+            </h3>
+          </div>
           <TrendChart
             data={
-              trendData?.data.map((d) => ({ date: d.date.toISOString(), value: d.value })) || []
+              trendData?.data.map((d) => ({
+                date: d.date,
+                value: d.value,
+              })) || []
             }
           />
         </div>
+
+        {/* Contributors Breakdown */}
         <div className="bg-card border-border rounded-3xl border p-6">
-          <ContributorsChart data={metric.contributorsData} keys={metric.contributorKeys} />
+          <div className="mb-4">
+            <h3 className="text-muted-foreground/80 text-sm font-bold uppercase tracking-widest">
+              Contributors
+            </h3>
+          </div>
+          <ContributorsChart data={displayContributors} keys={metric.contributorKeys} />
         </div>
       </div>
     </div>
