@@ -1,9 +1,7 @@
-import { LayoutDashboard, Settings, PieChart, Layers } from 'lucide-react';
+import { LayoutDashboard, Settings } from 'lucide-react';
 
 export const NAV_LINKS = [
   { href: '/metrics', label: 'Metrics', icon: LayoutDashboard },
-  { href: '/insights', label: 'Insights', icon: PieChart },
-  { href: '/projects', label: 'Projects', icon: Layers },
   { href: '/settings', label: 'Settings', icon: Settings },
 ] as const;
 

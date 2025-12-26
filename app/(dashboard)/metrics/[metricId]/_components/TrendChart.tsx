@@ -19,7 +19,6 @@ interface TrendPoint {
 }
 
 export function TrendChart({ data }: { data: TrendPoint[] }) {
-  console.log('Chart Data:', data);
   const chartData = useMemo(() => data, [data]);
   const isHighDensity = data.length > 20;
 
@@ -30,10 +29,11 @@ export function TrendChart({ data }: { data: TrendPoint[] }) {
     return { avg, isPositive };
   }, [data]);
 
-  const brandColor = stats.isPositive ? '#22c55e' : '#ef4444';
+  // 1. Updated to use your new Semantic Variables
+  const brandColor = stats.isPositive ? 'hsl(var(--success))' : 'hsl(var(--destructive))';
+  const indigoColor = 'hsl(var(--primary))';
 
   if (!data || data.length === 0) return null;
-  console.log(data);
 
   return (
     <div className="h-[350px] w-full">
@@ -41,32 +41,31 @@ export function TrendChart({ data }: { data: TrendPoint[] }) {
         <AreaChart data={chartData} margin={{ top: 20, right: 80, left: 0, bottom: 0 }}>
           <defs>
             <linearGradient id="dynamicGradient" x1="0" y1="0" x2="0" y2="1">
-              {/* Lowered stopOpacity to ensure things behind/below are visible */}
-              <stop offset="5%" stopColor={brandColor} stopOpacity={0.3} />
+              {/* Using CSS variables in the gradient for perfect sync */}
+              <stop offset="5%" stopColor={brandColor} stopOpacity={0.2} />
               <stop offset="95%" stopColor={brandColor} stopOpacity={0} />
             </linearGradient>
           </defs>
 
           <CartesianGrid
-            strokeDasharray="3 3"
+            strokeDasharray="4 4"
             vertical={false}
             stroke="hsl(var(--border))"
-            opacity={0.2}
+            opacity={0.3}
           />
 
           <XAxis
-            dataKey="date" // MUST match the key in your data object
+            dataKey="date"
             axisLine={false}
             tickLine={false}
             interval={'preserveStartEnd'}
             padding={{ left: 15, right: 15 }}
-            tick={{ fontSize: 10, fill: 'currentColor', opacity: 0.6 }}
+            tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))', fontWeight: 600 }}
             dy={10}
             tickFormatter={(str) => {
-              // Try/Catch prevents the whole chart from crashing if a date is weird
               try {
                 const date = new Date(str);
-                if (isNaN(date.getTime())) return str; // Return "Week 1" etc. if not a date
+                if (isNaN(date.getTime())) return str;
                 return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
               } catch {
                 return str;
@@ -91,11 +90,11 @@ export function TrendChart({ data }: { data: TrendPoint[] }) {
             content={({ active, payload, label }) => {
               if (active && payload && payload.length) {
                 return (
-                  <div className="bg-background/95 border-border rounded-xl border p-4 shadow-2xl backdrop-blur-md">
-                    <p className="text-muted-foreground mb-1 text-[10px] font-bold uppercase tracking-widest">
+                  <div className="border-border rounded-xl border bg-background/95 p-4 shadow-2xl backdrop-blur-md">
+                    <p className="text-muted-foreground mb-1 text-[10px] font-black uppercase tracking-widest">
                       {label}
                     </p>
-                    <p className="text-foreground text-lg font-black tabular-nums">
+                    <p className="text-lg font-black tabular-nums text-foreground">
                       {payload[0].value?.toLocaleString()}
                     </p>
                   </div>
@@ -105,37 +104,45 @@ export function TrendChart({ data }: { data: TrendPoint[] }) {
             }}
           />
 
-          {/* 1. LAYER 1: The Area (Rendered first = Bottom) */}
+          <ReferenceLine
+            y={stats.avg}
+            stroke={indigoColor}
+            strokeDasharray="8 4"
+            strokeWidth={1.5}
+            opacity={0.6}
+          >
+            <Label
+              value={
+                stats.avg >= 1000000
+                  ? `AVG: ${(stats.avg / 1000000).toFixed(1)}M`
+                  : stats.avg >= 1000
+                    ? `AVG: ${(stats.avg / 1000).toFixed(1)}K`
+                    : Math.floor(stats.avg)
+              }
+              position="right"
+              fill="hsl(var(--primary))"
+              fontSize={10}
+              fontWeight={900}
+              offset={5}
+              style={{ textAnchor: 'start' }}
+            />
+          </ReferenceLine>
+
           <Area
             type="monotone"
             dataKey="value"
             stroke={brandColor}
-            strokeWidth={3}
+            strokeWidth={4}
             fill="url(#dynamicGradient)"
             animationDuration={2000}
-            dot={isHighDensity ? false : { r: 4, fill: brandColor, strokeWidth: 2 }}
+            dot={isHighDensity ? false : { r: 4, fill: brandColor, strokeWidth: 0 }}
             activeDot={{
-              r: 7,
-              strokeWidth: 0,
+              r: 6,
+              strokeWidth: 4,
+              stroke: 'hsl(var(--background))',
               fill: brandColor,
             }}
           />
-
-          {/* 2. LAYER 2: The ReferenceLine (Rendered last = Top) */}
-          <ReferenceLine y={stats.avg} stroke="#94a3b8" strokeDasharray="8 4" strokeWidth={2}>
-            <Label
-              value={`AVG: ${
-                stats.avg >= 1000000
-                  ? (stats.avg / 1000000).toFixed(1) + 'M'
-                  : stats.avg.toLocaleString()
-              }`}
-              position="right"
-              fill="#64748b"
-              fontSize={10}
-              fontWeight={800}
-              offset={20}
-            />
-          </ReferenceLine>
         </AreaChart>
       </ResponsiveContainer>
     </div>

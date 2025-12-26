@@ -39,7 +39,7 @@ export function Header() {
                 height={30}
                 className="mx-1 rounded-lg"
               />
-              <span className="text-sm font-medium text-primary">{userName}</span>
+              <span className="text-md font-bold text-primary">{userName}</span>
             </div>
           )}
           <ThemeToggle />

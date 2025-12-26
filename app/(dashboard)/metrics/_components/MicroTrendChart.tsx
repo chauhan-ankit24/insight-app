@@ -10,10 +10,20 @@ export function MicroTrendChart({
   data: { value: number }[];
   status: 'healthy' | 'warning' | 'critical';
 }) {
-  const brandColor =
-    status === 'healthy' ? '#22c55e' : status === 'warning' ? '#f59e0b' : '#ef4444';
+  const brandColor = useMemo(() => {
+    switch (status) {
+      case 'healthy':
+        return 'hsl(var(--success))';
+      case 'warning':
+        return 'hsl(var(--warning))';
+      case 'critical':
+        return 'hsl(var(--destructive))';
+      default:
+        return 'hsl(var(--primary))';
+    }
+  }, [status]);
 
-  // 1. Calculate Average
+  // 2. Calculate Average
   const avgValue = useMemo(() => {
     if (!data.length) return 0;
     return data.reduce((acc, curr) => acc + curr.value, 0) / data.length;
@@ -24,35 +34,34 @@ export function MicroTrendChart({
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart data={data} margin={{ top: 2, bottom: 2, left: 0, right: 0 }}>
           <defs>
-            <linearGradient id={`gradient-${status}`} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor={brandColor} stopOpacity={0.3} />
+            <linearGradient id={`micro-grad-${status}`} x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor={brandColor} stopOpacity={0.25} />
               <stop offset="95%" stopColor={brandColor} stopOpacity={0} />
             </linearGradient>
           </defs>
 
-          {/* 2. Critical: Zoom in on the data so the variations and AVG line are visible */}
           <YAxis
             hide
-            domain={[(dataMin: number) => dataMin * 0.9, (dataMax: number) => dataMax * 1.1]}
+            domain={[(dataMin: number) => dataMin * 0.98, (dataMax: number) => dataMax * 1.02]}
           />
 
-          {/* 3. The Average Line (Subtle) */}
           <ReferenceLine
             y={avgValue}
-            stroke="currentColor"
-            strokeDasharray="3 3"
+            stroke="hsl(var(--primary))"
+            strokeDasharray="4 4"
             strokeWidth={1}
-            className="text-muted-foreground opacity-20"
+            opacity={0.15}
           />
 
           <Area
             type="monotone"
             dataKey="value"
             stroke={brandColor}
-            strokeWidth={1.5}
-            fill={`url(#gradient-${status})`}
+            strokeWidth={2}
+            fill={`url(#micro-grad-${status})`}
             dot={false}
-            isAnimationActive={false}
+            isAnimationActive={true}
+            animationDuration={1500}
           />
         </AreaChart>
       </ResponsiveContainer>

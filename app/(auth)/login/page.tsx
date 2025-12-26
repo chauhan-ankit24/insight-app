@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '../../contexts/AuthContext';
 import { Lock, User, Loader2 } from 'lucide-react';
 import Image from 'next/image';
+import { ActionButton } from '@/app/components/ui/ActionButton';
 
 export default function LoginPage() {
   const [name, setName] = useState('');
@@ -22,45 +23,52 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    // Simulate a slight delay for better UX feel
     await new Promise((resolve) => setTimeout(resolve, 800));
     login(name, password);
     setIsLoading(false);
   };
 
   return (
-    <div className="login-bg flex min-h-screen items-center justify-center px-4">
-      {/* Background Decorative Blob */}
-      <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
-        <div className="bg-primary/5 absolute -left-[10%] -top-[10%] h-[40%] w-[40%] rounded-full blur-[120px]" />
-        <div className="bg-primary/5 absolute -bottom-[10%] -right-[10%] h-[40%] w-[40%] rounded-full blur-[120px]" />
+    <div className="login-bg relative flex min-h-screen items-center justify-center overflow-hidden px-4">
+      <div className="pointer-events-none absolute inset-0 z-0">
+        <div className="absolute -left-[10%] -top-[10%] h-[50%] w-[50%] animate-pulse rounded-full bg-primary/20 blur-[120px]" />
+        <div className="absolute -bottom-[10%] -right-[10%] h-[50%] w-[50%] rounded-full bg-primary/10 blur-[120px]" />
       </div>
 
-      <div className="z-10 w-full max-w-[400px] space-y-8">
+      <div className="z-10 w-full max-w-[400px] space-y-6">
+        {/* 2. Logo Area */}
         <div className="flex flex-col items-center text-center">
-          <div className="bg-primary shadow-primary/20 flex items-center justify-center rounded-2xl shadow-lg backdrop-blur">
-            {/* <BarChart3 className="text-primary-foreground h-7 w-7" /> */}
-            <Image src="/logo.png" alt="Logo" width={200} height={200} className="rounded-lg" />
+          <div className="group relative">
+            <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-primary to-violet-500 opacity-15 blur transition duration-1000 group-hover:opacity-50"></div>
+            <div className="relative flex items-center justify-center rounded-2xl p-2 shadow-2xl backdrop-blur-sm">
+              <Image
+                src="/logo.png"
+                alt="Logo"
+                width={180}
+                height={180}
+                className="rounded-lg object-contain"
+              />
+            </div>
           </div>
         </div>
 
-        <div className="bg-card rounded-2xl border p-8 shadow-sm">
+        <div className="rounded-[32px] border border-white/40 p-8 shadow-button backdrop-blur-sm">
           <form className="space-y-5" onSubmit={handleSubmit}>
             <div className="space-y-2">
               <label
                 htmlFor="name"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                className="text-muted-foreground/80 ml-1 text-[11px] font-black uppercase tracking-widest"
               >
-                Name
+                Identity
               </label>
-              <div className="relative">
-                <User className="text-muted-foreground absolute left-3 top-3 h-4 w-4" />
+              <div className="group relative">
+                <User className="absolute left-3 top-1/2 z-10 h-4 w-4 -translate-y-1/2 text-primary" />
                 <input
                   id="name"
                   type="text"
                   required
                   placeholder="Enter your name"
-                  className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-primary flex h-10 w-full rounded-md border px-10 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="border-border/50 flex h-11 w-full rounded-xl border bg-background/50 px-10 py-2 text-sm outline-none transition-all focus:border-primary/50 focus:ring-4 focus:ring-primary/5"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                 />
@@ -68,39 +76,47 @@ export default function LoginPage() {
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="password" className="text-sm font-medium leading-none">
-                Password
+              <label
+                htmlFor="password"
+                className="text-muted-foreground/80 ml-1 text-[11px] font-black uppercase tracking-widest"
+              >
+                Access Key
               </label>
-              <div className="relative">
-                <Lock className="text-muted-foreground absolute left-3 top-3 h-4 w-4" />
+              <div className="group relative">
+                <Lock className="absolute left-3 top-1/2 z-10 h-4 w-4 -translate-y-1/2 text-primary" />
                 <input
                   id="password"
                   type="password"
                   required
                   placeholder="••••••••"
-                  className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-primary flex h-10 w-full rounded-md border px-10 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+                  className="border-border/50 flex h-11 w-full rounded-xl border bg-background/50 px-10 py-2 text-sm outline-none transition-all focus:border-primary/50 focus:ring-4 focus:ring-primary/5"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
             </div>
 
-            <button
+            <ActionButton
               type="submit"
               disabled={isLoading}
-              className="bg-primary text-primary-foreground hover:bg-primary/90 focus-visible:ring-primary inline-flex h-10 w-full items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50"
+              className="flex w-full items-center justify-center bg-primary uppercase tracking-[0.2em] text-white hover:shadow-lg hover:shadow-primary/30 active:scale-[0.97] disabled:opacity-50"
             >
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Signing in...
+                  Authenticating...
                 </>
               ) : (
-                'Sign in'
+                'Authorize Entry'
               )}
-            </button>
+            </ActionButton>
           </form>
         </div>
+
+        {/* 4. Footer Brand Detail */}
+        <p className="text-muted-foreground/40 text-center text-[10px] font-bold uppercase tracking-[0.4em]">
+          InsightEdge Secure Protocol v2.0
+        </p>
       </div>
     </div>
   );
