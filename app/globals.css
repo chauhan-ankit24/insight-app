@@ -13,3 +13,26 @@
     --foreground: 210 40% 98%;
   }
 }
+
+@layer utilities {
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground) / 0.1);
+    border-radius: 20px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.2);
+  }
+
+  .login-bg {
+    background-image: url('/bg.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+}

@@ -4,6 +4,7 @@ import { MetricContributor } from '@/lib/types/metrics';
 import { InsightControls } from './_components/InsightControls';
 import { TrendChart } from './_components/TrendChart';
 import { ContributorsChart } from './_components/ContributorsChart';
+import { ChevronLeft, Info, TrendingUp, Users } from 'lucide-react';
 
 export default async function MetricDetailPage({
   params,
@@ -12,95 +13,136 @@ export default async function MetricDetailPage({
   params: { metricId: string };
   searchParams: { grain?: string; range?: string };
 }) {
-  const { metricId } = params;
+  const { metricId } = await params;
 
-  // URL as Global State: Fallback to defaults if params are missing
   const grain = searchParams.grain || 'daily';
   const range = Number(searchParams.range) || 30;
+  console.log('id', metricId, params);
 
-  // Parallel Data Fetching: Fetch everything at once to save time
   const [metric, trendData, contributors] = await Promise.all([
     getMetricById(metricId),
     getMetricTrend(metricId, grain, range),
     getMetricContributors(),
   ]);
-  console.log(metric);
+
   if (!metric) {
     return (
-      <div className="flex flex-col items-center justify-center py-20">
-        <h1 className="text-2xl font-bold text-gray-800">Metric Not Found</h1>
-        <Link href="/metrics" className="mt-4 text-blue-600 hover:underline">
-          ← Back to Dashboard
+      <div className="animate-in fade-in zoom-in-95 flex flex-col items-center justify-center py-32">
+        <div className="bg-destructive/10 mb-4 rounded-full p-4">
+          <Info className="text-destructive h-10 w-10" />
+        </div>
+        <h1 className="text-2xl font-bold">Metric Not Found</h1>
+        {/* <p className="text-muted-foreground">The ID "{metricId}" does not exist in our records.</p> */}
+        <Link
+          href="/metrics"
+          className="bg-primary text-primary-foreground hover:bg-primary/90 mt-6 inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors"
+        >
+          <ChevronLeft className="h-4 w-4" /> Back to Dashboard
         </Link>
       </div>
     );
   }
 
+  const statusStyles = {
+    healthy:
+      'bg-green-100 text-green-700 dark:bg-green-500/10 dark:text-green-400 border-green-200 dark:border-green-500/20',
+    warning:
+      'bg-yellow-100 text-yellow-700 dark:bg-yellow-500/10 dark:text-yellow-400 border-yellow-200 dark:border-yellow-500/20',
+    critical:
+      'bg-red-100 text-red-700 dark:bg-red-500/10 dark:text-red-400 border-red-200 dark:border-red-500/20',
+  };
+
   return (
-    <div className="space-y-8 pb-12">
-      {/* Header Navigation */}
-      <div className="flex flex-col gap-2">
+    <div className="animate-in fade-in space-y-8 pb-12 duration-700">
+      {/* 1. Enhanced Breadcrumb & Header */}
+      <div className="space-y-4">
         <Link
           href="/metrics"
-          className="w-fit text-sm font-medium text-blue-600 hover:text-blue-700"
+          className="text-muted-foreground hover:text-primary group inline-flex items-center gap-1 text-sm font-medium transition-colors"
         >
-          ← Back to Metrics
+          <ChevronLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
+          Back to Metrics
         </Link>
-        <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold tracking-tight">{metric.name}</h1>
-          <span
-            className={`rounded-full px-3 py-1 text-xs font-bold uppercase ${
-              metric.status === 'healthy'
-                ? 'bg-green-100 text-green-700'
-                : metric.status === 'warning'
-                  ? 'bg-yellow-100 text-yellow-700'
-                  : 'bg-red-100 text-red-700'
-            }`}
-          >
-            {metric.status}
-          </span>
-        </div>
-        <p className="text-muted-foreground">{metric.description}</p>
-      </div>
 
-      {/* A. Insight Controls (URL Syncing) */}
-      <InsightControls />
+        <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+          <div className="space-y-1">
+            <div className="flex items-center gap-3">
+              <h1 className="text-foreground text-4xl font-extrabold tracking-tight">
+                {metric.name}
+              </h1>
+              <span
+                className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider ${statusStyles[metric.status]}`}
+              >
+                {metric.status}
+              </span>
+            </div>
+            <p className="text-muted-foreground max-w-2xl text-lg">{metric.description}</p>
+          </div>
 
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-        {/* B. Trend Insight (Main Chart) */}
-        <div className="rounded-xl border bg-white p-6 shadow-sm lg:col-span-2">
-          <div className="mb-6 flex items-center justify-between">
-            <h3 className="font-semibold text-gray-800">Performance Trend</h3>
-            <div className="text-muted-foreground text-xs">
-              Showing {range} days ({grain})
+          <div className="bg-card hidden items-center gap-6 rounded-2xl border px-6 py-3 shadow-sm lg:flex">
+            <div className="text-center">
+              <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest">
+                Type
+              </p>
+              <p className="text-sm font-bold">{metric.type}</p>
+            </div>
+            <div className="bg-border h-8 w-px" />
+            <div className="text-center">
+              <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest">
+                Category
+              </p>
+              <p className="text-sm font-bold">{metric.category}</p>
             </div>
           </div>
-          <TrendChart
-            data={
-              trendData?.data.map((item: { date: Date; value: number }) => ({
-                date: item.date.toISOString(),
-                value: item.value,
-              })) || []
-            }
-          />
+        </div>
+      </div>
+
+      {/* 2. Insight Controls with Surface Style */}
+      <div className="bg-background/80 sticky top-2 z-30 pb-2 backdrop-blur-md">
+        <div className="bg-card inline-block rounded-2xl border p-3 shadow-sm">
+          <InsightControls />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+        {/* 3. Trend Insight (Main Chart Card) */}
+        <div className="bg-card rounded-2xl border p-6 shadow-sm transition-all lg:col-span-2">
+          <div className="mb-8 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="bg-primary/10 text-primary rounded-lg p-2">
+                <TrendingUp className="h-5 w-5" />
+              </div>
+              <h3 className="text-foreground text-lg font-bold">Performance Trend</h3>
+            </div>
+            <div className="bg-secondary text-muted-foreground rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider">
+              {grain} • Last {range} days
+            </div>
+          </div>
+
+          <div className="">
+            <TrendChart
+              data={
+                trendData?.data.map((item: { date: Date; value: number }) => ({
+                  date: item.date.toISOString(),
+                  value: item.value,
+                })) || []
+              }
+            />
+          </div>
         </div>
 
-        {/* C. Contributors Insight (Bar Chart) */}
-        <div className="rounded-xl border bg-white p-6 shadow-sm">
-          <h3 className="mb-6 font-semibold text-gray-800">Top Contributors</h3>
-          <ContributorsChart data={metric.contributorsData} keys={metric.contributorKeys} />
-
-          {/* Legacy List fallback for accessibility */}
-          <div className="mt-8 space-y-3 border-t pt-6">
-            <p className="text-xs font-bold uppercase tracking-wider text-gray-400">
-              Detailed Breakdown
-            </p>
-            {contributors.map((c: MetricContributor, idx: number) => (
-              <div key={idx} className="flex justify-between text-sm">
-                <span className="text-gray-600">{c.name}</span>
-                <span className="font-mono font-bold">{c.contribution}%</span>
+        {/* 4. Contributors Insight (Stacked Card) */}
+        <div className="bg-card flex flex-col rounded-2xl border shadow-sm">
+          <div className="p-6 pb-0">
+            <div className="mb-6 flex items-center gap-2">
+              <div className="bg-primary/10 text-primary rounded-lg p-2">
+                <Users className="h-5 w-5" />
               </div>
-            ))}
+              <h3 className="text-foreground text-lg font-bold">Distribution</h3>
+            </div>
+            <div className="h-[300px]">
+              <ContributorsChart data={metric.contributorsData} keys={metric.contributorKeys} />
+            </div>
           </div>
         </div>
       </div>

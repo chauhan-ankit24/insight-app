@@ -21,11 +21,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }
 
   return (
-    <div className="bg-foreground min-h-screen">
+    <div className="bg-background text-foreground flex h-screen flex-col overflow-hidden">
       <Header />
-      <div className="flex">
+
+      <div className="flex flex-1 overflow-hidden">
         <Sidebar />
-        <main className="flex-1 p-6">{children}</main>
+
+        <main className="custom-scrollbar h-full min-w-0 flex-1 overflow-y-auto scroll-smooth p-6">
+          <div className="mx-auto max-w-[1600px]">{children}</div>
+        </main>
       </div>
     </div>
   );
