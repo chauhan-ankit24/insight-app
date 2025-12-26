@@ -4,13 +4,45 @@
 
 @layer base {
   :root {
+    --primary: 250 85% 60%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Main Content Area: Pure White */
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
+
+    /* Sidebar & Header: Subtle Off-White/Gray */
+    /* Using a very light slate (97-98% lightness) */
+    --header-bg: 210 40% 99.5%; /* Translucent white for glassmorphism */
+
+    /* Cards & Borders */
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --border: 214.3 31.8% 91.4%;
+
+    --button-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.15);
+    --button-shadow-hover: 0 8px 20px -6px rgba(0, 0, 0, 0.3);
   }
 
   .dark {
+    --primary: 250 90% 66%;
+
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
+
+    /* Dark mode sidebar: slightly lighter than pure black background */
+    --header-bg: 222.2 84% 4.9% / 0.8;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --border: 217.2 32.6% 17.5%;
+
+    --button-shadow: 0 4px 12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1);
+    --button-shadow-hover: 0 0 15px rgba(255, 255, 255, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.2);
   }
 }
 
