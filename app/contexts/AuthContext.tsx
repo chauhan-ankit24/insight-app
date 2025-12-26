@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 
 interface AuthContextType {
@@ -32,15 +32,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
   useEffect(() => {
-    // Check if user is logged in on app load, but allow public access to Home page
-    if (typeof window !== 'undefined') {
-      const storedAuth = localStorage.getItem('isAuthenticated');
-      const currentPath = window.location.pathname;
-      if (storedAuth !== 'true' && currentPath !== '/') {
-        router.push('/login');
-      }
+    // Redirect to login if not authenticated and not on root page
+    if (typeof window !== 'undefined' && !isAuthenticated && window.location.pathname !== '/') {
+      router.push('/login');
     }
-  }, [router]);
+  }, [isAuthenticated, router]);
 
   const login = (name: string, password: string) => {
     // Simple authentication logic - in a real app, this would validate against a backend
@@ -57,6 +53,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem('isAuthenticated');
     localStorage.removeItem('userCredentials');
     setIsAuthenticated(false);
+    setUserName(null);
     router.push('/login');
   };
 

@@ -19,6 +19,15 @@ export function getMetricById(metricId: string): Metric | null {
     lastUpdated: new Date().toISOString(),
     trend: 'neutral',
     sparklineData: [],
+    contributorKeys: ['Channel A', 'Channel B', 'Channel C'],
+    contributorsData: [
+      { period: 'Jan', 'Channel A': 1000, 'Channel B': 800, 'Channel C': 600 },
+      { period: 'Feb', 'Channel A': 1200, 'Channel B': 900, 'Channel C': 700 },
+      { period: 'Mar', 'Channel A': 1100, 'Channel B': 1000, 'Channel C': 800 },
+      { period: 'Apr', 'Channel A': 1300, 'Channel B': 1100, 'Channel C': 900 },
+      { period: 'May', 'Channel A': 1400, 'Channel B': 1200, 'Channel C': 1000 },
+      { period: 'Jun', 'Channel A': 1500, 'Channel B': 1300, 'Channel C': 1100 },
+    ],
   };
 }
 
@@ -64,7 +73,7 @@ export async function getMetricTrend(
   };
 }
 
-export async function getMetricContributors(metricId: string): Promise<MetricContributor[]> {
+export async function getMetricContributors(): Promise<MetricContributor[]> {
   // Mock implementation: return sample contributors
   return mockContributors;
 }

@@ -22,9 +22,9 @@ export default async function MetricDetailPage({
   const [metric, trendData, contributors] = await Promise.all([
     getMetricById(metricId),
     getMetricTrend(metricId, grain, range),
-    getMetricContributors(metricId),
+    getMetricContributors(),
   ]);
-
+  console.log(metric);
   if (!metric) {
     return (
       <div className="flex flex-col items-center justify-center py-20">
@@ -88,12 +88,7 @@ export default async function MetricDetailPage({
         {/* C. Contributors Insight (Bar Chart) */}
         <div className="rounded-xl border bg-white p-6 shadow-sm">
           <h3 className="mb-6 font-semibold text-gray-800">Top Contributors</h3>
-          <ContributorsChart
-            data={contributors.map((c: MetricContributor) => ({
-              name: c.name,
-              value: c.contribution,
-            }))}
-          />
+          <ContributorsChart data={metric.contributorsData} keys={metric.contributorKeys} />
 
           {/* Legacy List fallback for accessibility */}
           <div className="mt-8 space-y-3 border-t pt-6">

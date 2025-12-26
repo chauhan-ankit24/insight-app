@@ -11,15 +11,28 @@ export interface Metric {
   lastUpdated: string;
   trend: 'up' | 'down' | 'neutral';
   sparklineData: number[];
+  contributorKeys: string[];
+  contributorsData: { [key: string]: number | string }[];
 }
 
 export interface MetricTrend {
   metricId: string;
   data: { date: Date; value: number }[];
 }
-
+export interface MetricTrendPoint {
+  date: string; // ISO string for sorting/formatting
+  label: string; // e.g. "Jan", "Feb" or "Week 1"
+  [key: string]: string | number; // This allows dynamic keys like { date: '...', label: 'Jan', Wheat: 10, Barley: 5 }
+}
 export interface MetricContributor {
   id: string;
   name: string;
   contribution: number;
+}
+
+export interface MetricTrendResponse {
+  metricId: string;
+  grain: 'daily' | 'weekly' | 'monthly';
+  range: number;
+  data: MetricTrendPoint[];
 }
