@@ -4,8 +4,8 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 interface AuthContextType {
-  isAuthenticated: boolean;
-  userName: string | null;
+  isAuthenticated: boolean | undefined;
+  userName: string | null | undefined;
   login: (name: string, password: string) => void;
   logout: () => void;
 }
@@ -13,27 +13,32 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('isAuthenticated') === 'true';
-    }
-    return false;
-  });
-  const [userName, setUserName] = useState<string | null>(() => {
-    if (typeof window !== 'undefined') {
-      const storedCredentials = localStorage.getItem('userCredentials');
-      if (storedCredentials) {
-        const { name } = JSON.parse(storedCredentials);
-        return name;
-      }
-    }
-    return null;
-  });
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | undefined>(undefined);
+  const [userName, setUserName] = useState<string | null | undefined>(undefined);
   const router = useRouter();
 
   useEffect(() => {
+    const storedAuth = localStorage.getItem('isAuthenticated') === 'true';
+    // eslint-disable-next-line
+    setIsAuthenticated(storedAuth);
+
+    const storedCredentials = localStorage.getItem('userCredentials');
+    if (storedCredentials) {
+      const { name } = JSON.parse(storedCredentials);
+
+      setUserName(name);
+    } else {
+      setUserName(null);
+    }
+  }, []);
+
+  useEffect(() => {
     // Redirect to login if not authenticated and not on root page
-    if (typeof window !== 'undefined' && !isAuthenticated && window.location.pathname !== '/') {
+    if (
+      typeof window !== 'undefined' &&
+      isAuthenticated === false &&
+      window.location.pathname !== '/'
+    ) {
       router.push('/login');
     }
   }, [isAuthenticated, router]);
