@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Calendar, BarChart2, Clock } from 'lucide-react';
+import { BarChart2, Clock } from 'lucide-react';
 
 export function InsightControls() {
   const router = useRouter();

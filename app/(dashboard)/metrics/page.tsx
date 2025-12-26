@@ -1,7 +1,7 @@
 import { mockMetrics } from '@/lib/data/mock-data';
 import { MetricTable } from '@/app/(dashboard)/metrics/_components/MetricTable';
 import { SummaryCards } from '@/app/(dashboard)/metrics/_components/SummaryCards';
-import { Plus, Download, Calendar, Search } from 'lucide-react';
+import { Download, Calendar, Search } from 'lucide-react';
 
 export default function MetricsPage() {
   return (
