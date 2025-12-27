@@ -7,8 +7,11 @@ on:
     branches: [develop, main]
 
 jobs:
-  quality-and-security:
+  # STEP 1: Fix formatting and push changes back
+  lint-and-format:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -24,29 +27,56 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # 1. AUTO-FIX: Automatically fix lint/prettier issues and push back to repo
       - name: Fix Formatting & Linting
         run: |
           npm run format || true
           npm run lint -- --fix || true
+        env:
+          HUSKY: 0
 
       - name: Commit Auto-Fixes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "style: auto-fix linting and formatting"
+        env:
+          HUSKY: 0
 
-      # 2. SECURITY: Scan for vulnerable npm packages
+  # STEP 2: Security check (runs in parallel with Lint)
+  security-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Install dependencies
+        run: npm install
       - name: Security Audit
         run: npm audit --audit-level=high
 
-      # 3. TESTING
+  # STEP 3: Logic Testing (runs in parallel with others)
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Install dependencies
+        run: npm install
       - name: Run Tests
         run: npm run test
 
+  # STEP 4: Deployment (Runs only if ALL previous jobs pass)
   deploy:
-    needs: quality-and-security
+    needs: [lint-and-format, security-audit, unit-tests]
     runs-on: ubuntu-latest
-    # Only deploy on pushes to develop/main, not on every PR check
     if: github.event_name == 'push'
     steps:
       - name: Checkout code
@@ -72,3 +102,26 @@ jobs:
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+  # STEP 5: Lighthouse CI (Performance Scoring)
+  performance-audit:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install Lighthouse CI
+        run: npm install -g @lhci/cli@0.13.x
+
+      - name: Run Lighthouse Audit
+        run: |
+          lhci collect
+          lhci assert
+          lhci upload --target=temporary-public-storage
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.GITHUB_TOKEN }}
