@@ -1,147 +1,154 @@
 # InsightEdge
 
-An application for generating and viewing multi-page insights and data visualizations. Built with Next.js, this app provides a comprehensive dashboard for metrics analysis, including trend charts, contributor data, and export functionalities.
+A Next.js application for generating multi-page insights and data visualizations with comprehensive metrics analysis, trend charts, and export capabilities.
 
 ## Features
 
-### Core Functionality
+**Dashboard & Analytics**
 
-- **Multi-Page Insights Dashboard**: Navigate through various pages including landing, authentication, and dashboard views.
-- **Metrics Management**: View, filter, and analyze metrics with real-time data fetching and caching.
-- **Summary Cards**: Highlight key metrics such as best performers, action-required items, and needs-attention alerts.
-- **Data Visualization**: Interactive charts and graphs using Recharts for trend analysis, sparklines, and contributor breakdowns.
-- **Export Capabilities**: Generate and download metrics data as CSV files for external analysis.
-- **Responsive Design**: Fully responsive UI built with Tailwind CSS, ensuring compatibility across devices.
+- Multi-page insights with summary cards (best performers, action items, alerts)
+- Interactive data visualizations with Recharts (trends, sparklines, contributor breakdowns)
+- Advanced filtering by category, query, and date ranges
+- CSV export functionality for external analysis
 
-### User Experience Enhancements
+**Performance & UX**
 
-- **Theme Toggle**: Dark and light mode support with next-themes for personalized viewing.
-- **Smooth Animations**: Framer Motion integration for fluid transitions and interactive elements.
-- **Authentication Context**: Secure user sessions with React Context for auth state management.
-- **Error Handling**: Custom error pages and middleware for robust application stability.
+- Server-side caching with `unstable_cache` and parallel data fetching
+- Suspense-based skeleton loaders to eliminate layout shifts
+- URL-driven state for shareable filtered views
+- Debounced search with `useTransition` for responsive UI
+- Error isolation with localized error boundaries
+- Dark/light mode with next-themes
 
-### Data Handling
+**Data Handling**
 
-- **Caching**: Optimized data fetching with Next.js unstable_cache for improved performance.
-- **Mock Data Simulation**: Realistic data resolvers simulating API calls for metrics, trends, and contributors.
-- **Filtering and Search**: Advanced filtering by category, query, and date ranges for metrics tables.
-- **Dynamic Data Aggregation**: Support for daily, weekly, and monthly trend aggregations.
+- Mock data resolvers simulating API calls for metrics, trends, and contributors
+- Dynamic aggregation (daily, weekly, monthly)
+- Optimized caching with unique keys per filter combination
 
-### Development and Quality Assurance
+**Code Quality**
 
-- **TypeScript**: Full type safety with TypeScript for reliable code.
-- **Linting and Formatting**: ESLint and Prettier for code quality, with lint-staged for pre-commit checks.
-- **Testing**: Vitest for unit testing, including data resolvers and utilities.
-- **Commit Standards**: Commitlint with conventional commits for consistent git history.
-- **CI/CD**: GitHub Actions workflow for automated building, testing, and linting on pushes and PRs to the develop branch.
-
-### Additional Enhancements
-
-- **Modern UI Components**: Reusable components like ActionButton and layout elements (Header, Sidebar).
-- **Font Optimization**: Geist font family loaded via next/font for performance.
-- **Middleware Support**: Custom middleware for request handling and routing.
-- **SEO Optimization**: Metadata configuration for better search engine visibility.
+- Full TypeScript coverage with strict type safety
+- ESLint, Prettier, Vitest for testing
+- Husky pre-commit hooks with lint-staged
+- Commitlint for conventional commit standards
+- GitHub Actions CI/CD (build, test, lint on develop branch)
 
 ## Tech Stack
 
-- **Framework**: Next.js 16 (App Router)
-- **Frontend**: React 19, TypeScript
-- **Styling**: Tailwind CSS, PostCSS
-- **Animations**: Framer Motion
-- **Charts**: Recharts
-- **Icons**: Lucide React
-- **Theming**: next-themes
-- **Development Tools**: ESLint, Prettier, Vitest, Husky, Lint-staged, Commitlint
-- **CI/CD**: GitHub Actions
+**Core**: Next.js 16 (App Router), React 19, TypeScript  
+**Styling**: Tailwind CSS, Framer Motion  
+**Charts**: Recharts, Lucide React  
+**Tools**: ESLint, Prettier, Vitest, Husky, GitHub Actions
 
 ## Getting Started
 
-### Prerequisites
+```bash
+# Install dependencies
+npm install
 
-- Node.js 24 or later
-- npm, yarn, pnpm, or bun
+# Run development server
+npm run dev
 
-### Installation
+# Build for production
+npm run build
 
-1. Clone the repository:
+# Run tests
+npm run test
+```
 
-   ```bash
-   git clone <repository-url>
-   cd insight-app
-   ```
+Open [http://localhost:3000](http://localhost:3000)
 
-2. Install dependencies:
+## Scripts
 
-   ```bash
-   npm install
-   ```
+- `npm run dev` - Development server
+- `npm run build` - Production build
+- `npm run start` - Production server
+- `npm run lint` - ESLint linting
+- `npm run test` - Run Vitest tests
 
-3. Run the development server:
+## Project Structure
 
-   ```bash
-   npm run dev
-   ```
+```
+app/          # Next.js pages and layouts
+lib/          # Utils, data resolvers, types
+components/   # Reusable UI components
+public/       # Static assets
+constants/    # App constants
+```
 
-4. Open [http://localhost:3000](http://localhost:3000) in your browser.
+## Key Optimizations
 
-### Available Scripts
+- **Server Caching**: `unstable_cache` with dynamic keys for memoization
+- **Parallel Fetching**: `Promise.all` eliminates request waterfalls
+- **Bundle Optimization**: Data-heavy components stay server-side
+- **Island Architecture**: Selective `"use client"` for minimal JS
+- **Image Prefetching**: `next/image` with priority loading
+- **Memoized Processing**: `useMemo` for heavy chart computations
 
-- `npm run dev` - Start the development server
-- `npm run build` - Build the application for production
-- `npm run start` - Start the production server
-- `npm run lint` - Run ESLint for code linting
-- `npm run test` - Run Vitest for testing
-- `npm run prepare` - Set up Husky for git hooks
+## Folder strucutre
 
-## Usage
+```
+└── 📁app
+    └── 📁(auth)
+        └── 📁login
+            ├── LoginForm.tsx
+            ├── page.tsx
+    └── 📁(dashboard)
+        └── 📁metrics
+            └── 📁_components
+                ├── MetricsHeader.tsx
+                ├── MetricsSkeleton.tsx
+                ├── MetricsSummaryCards.tsx
+                ├── MetricsTable.tsx
+                ├── MicroTrendChart.tsx
+            └── 📁[metricId]
+                └── 📁_components
+                    ├── ContributorsChart.tsx
+                    ├── InsightControls.tsx
+                    ├── InsightsSketon.tsx
+                    ├── TrendChart.tsx
+                ├── loading.tsx
+                ├── page.tsx
+            ├── error.tsx
+            ├── loading.tsx
+            ├── page.tsx
+        └── 📁settings
+            ├── page.tsx
+        ├── layout.tsx
+    └── 📁components
+        └── 📁layout
+            ├── Header.tsx
+            ├── Sidebar.tsx
+        └── 📁ui
+            ├── ActionButton.tsx
+        ├── ThemeToggle.tsx
+    └── 📁constants
+        ├── index.ts
+    └── 📁contexts
+        ├── AuthContext.tsx
+    └── 📁providers
+        ├── providers.tsx
+    ├── error.tsx
+    ├── favicon.ico
+    ├── globals.css
+    ├── layout.tsx
+    ├── middleware.ts
+    └── page.tsx
+```
 
-1. **Landing Page**: Access the main entry point at the root URL.
-2. **Authentication**: Use the auth context for user login/logout (implementation depends on your auth provider).
-3. **Dashboard**: Navigate to `/metrics` to view the full dashboard with:
-   - Summary cards showing key metrics
-   - Filterable metrics table
-   - Trend charts and contributor data
-4. **Export**: Use the export functionality to download metrics as CSV.
-5. **Theme Toggle**: Switch between light and dark modes using the theme toggle component.
+## Data and Test Files
 
-## Development
-
-### Project Structure
-
-- `app/` - Next.js app directory with pages and layouts
-- `lib/` - Utility functions, data resolvers, and types
-- `components/` - Reusable UI components
-- `public/` - Static assets
-- `constants/` - Application constants
-
-### Code Quality
-
-- Pre-commit hooks ensure code is linted and formatted
-- Tests are run automatically in CI
-- Commit messages follow conventional commit standards
-
-### Contributing
-
-1. Fork the repository
-2. Create a feature branch from `develop`
-3. Make your changes
-4. Ensure tests pass and code is linted
-5. Submit a pull request
-
-## Deployment
-
-Deploy to Vercel or any platform supporting Next.js:
-
-1. Build the application:
-
-   ```bash
-   npm run build
-   ```
-
-2. Deploy the `.next` folder and required files.
-
-For Vercel-specific deployment, check [Next.js deployment docs](https://nextjs.org/docs/app/building-your-application/deploying).
-
-## License
-
-This project is private and not licensed for public use.
+```
+└── 📁lib
+    └── 📁data
+        ├── mock-data.ts
+        ├── resolvers.test.ts
+        ├── resolvers.ts
+    └── 📁types
+        ├── metrics.ts
+    └── 📁utils
+        ├── exportMetrics.ts
+        ├── formatters.ts
+        └── utils.ts
+```
