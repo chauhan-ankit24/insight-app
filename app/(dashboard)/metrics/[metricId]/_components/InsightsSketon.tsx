@@ -1,3 +1,4 @@
+import { ROUTES } from '@/app/constants/routes';
 import { ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 
@@ -7,7 +8,7 @@ export default function InsightsSkeleton() {
       {/* 1. Static Back Link - Kept for immediate interaction */}
       <div className="text-muted-foreground/40 inline-flex items-center gap-1 text-sm font-medium">
         <Link
-          href="/metrics"
+          href={ROUTES.DASHBOARD.METRICS}
           className="text-muted-foreground inline-flex items-center gap-1 text-sm font-medium transition-colors hover:text-primary"
         >
           <ChevronLeft className="h-4 w-4" /> Back to Metrics

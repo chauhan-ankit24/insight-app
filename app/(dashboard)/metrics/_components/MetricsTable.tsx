@@ -3,15 +3,12 @@ import { TableMetric } from '@/lib/data/resolvers';
 import { MicroTrendChart } from './MicroTrendChart';
 import { SearchX } from 'lucide-react';
 import Link from 'next/link';
+import { ROUTES } from '@/app/constants/routes';
+import { getStatusStyles } from '@/lib/utils/style-utils';
+import { METRIC_STATUS } from '@/app/constants';
 
 export function MetricTable({ metrics }: { metrics: TableMetric[] }) {
-  const statusConfig = {
-    healthy: { bg: 'bg-success', ring: 'ring-success/20', text: 'Healthy' },
-    warning: { bg: 'bg-warning', ring: 'ring-warning/20', text: 'Warning' },
-    critical: { bg: 'bg-destructive', ring: 'ring-destructive/20', text: 'Critical' },
-  };
-
-  const hrefBuilder = (id: string) => `/metrics/${id}?grain=daily&range=30`;
+  const hrefBuilder = (id: string) => `${ROUTES.DASHBOARD.METRICS}/${id}?grain=daily&range=30`;
 
   return (
     <div className="bg-card border-border/50 relative min-h-[400px] w-full overflow-hidden rounded-xl border shadow-sm">
@@ -31,6 +28,7 @@ export function MetricTable({ metrics }: { metrics: TableMetric[] }) {
             {metrics?.length > 0 ? (
               metrics.map((metric) => {
                 const url = hrefBuilder(metric.id);
+                const statusInfo = getStatusStyles(metric.status || METRIC_STATUS.HEALTHY);
                 return (
                   <tr
                     key={metric.id}
@@ -58,10 +56,10 @@ export function MetricTable({ metrics }: { metrics: TableMetric[] }) {
                       >
                         <div className="relative flex h-2 w-2">
                           <div
-                            className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-20 ${statusConfig[metric.status].bg}`}
+                            className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-20 ${statusInfo.bg}`}
                           />
                           <div
-                            className={`relative inline-flex h-2 w-2 rounded-full ring-4 ${statusConfig[metric.status].bg} ${statusConfig[metric.status].ring}`}
+                            className={`pulse-2 relative inline-flex h-2 w-2 rounded-full ${statusInfo.bg}`}
                           />
                         </div>
                       </Link>

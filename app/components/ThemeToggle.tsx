@@ -19,7 +19,7 @@ export function ThemeToggle() {
 
       <MoonStar
         className={`absolute h-5 w-5 transition-all duration-500 ${
-          isDark ? 'rotate-0 scale-100 text-blue-400 opacity-100' : 'rotate-90 scale-0 opacity-0'
+          isDark ? 'rotate-0 scale-100 opacity-100' : 'rotate-90 scale-0 opacity-0'
         } `}
       />
 

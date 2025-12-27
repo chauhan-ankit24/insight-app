@@ -1,38 +1,21 @@
 import { formatCurrency, formatNumberCompact } from '@/lib/utils/formatters';
-import { ArrowUpRight, ArrowDownRight, Minus } from 'lucide-react';
 import { MicroTrendChart } from './MicroTrendChart';
 import { SummaryMetric } from '@/lib/data/resolvers';
 import Link from 'next/link';
+import { ROUTES } from '@/app/constants/routes';
+import { getTrendStyles } from '@/lib/utils/style-utils';
 
 export function SummaryCards({ metrics }: { metrics: SummaryMetric[] }) {
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
       {metrics?.map((metric) => {
-        const styles = {
-          up: {
-            bg: 'bg-success/10',
-            border: 'border-success',
-            text: 'text-success',
-            icon: <ArrowUpRight className="h-4 w-4" />,
-          },
-          down: {
-            bg: 'bg-destructive/10',
-            border: 'border-destructive',
-            text: 'text-destructive',
-            icon: <ArrowDownRight className="h-4 w-4" />,
-          },
-          neutral: {
-            bg: 'bg-warning/10',
-            border: 'border-warning',
-            text: 'text-warning',
-            icon: <Minus className="h-4 w-4" />,
-          },
-        }[metric.trend || 'neutral'];
+        const styles = getTrendStyles(metric.trend);
+        const Icon = styles.icon;
 
         return (
           <Link
             key={metric.id}
-            href={`/metrics/${metric.id}?grain=daily&range=30`}
+            href={`${ROUTES.DASHBOARD.METRICS}/${metric.id}?grain=daily&range=30`}
             className={`group relative flex cursor-pointer flex-col justify-between overflow-hidden rounded-3xl border p-5 shadow-sm transition-all hover:scale-[1.01] hover:shadow-md ${styles.bg} ${styles.border}`}
           >
             <div className="relative z-10 space-y-4">
@@ -44,7 +27,7 @@ export function SummaryCards({ metrics }: { metrics: SummaryMetric[] }) {
                 <div
                   className={`flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-black ${styles.bg} ${styles.text} ${styles.border}`}
                 >
-                  {styles.icon}
+                  <Icon className="h-4 w-4" />
                   {Math.abs(metric.changePercent)}%
                 </div>
               </div>

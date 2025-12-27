@@ -5,6 +5,8 @@ import { TrendChart } from './_components/TrendChart';
 import { ContributorsChart } from './_components/ContributorsChart';
 import { ChevronLeft, Tag, Folder } from 'lucide-react';
 import { formatDate } from '@/lib/utils/formatters';
+import { ROUTES } from '@/app/constants/routes';
+import { getStatusStyles } from '@/lib/utils/style-utils';
 
 export default async function MetricDetailPage({
   params,
@@ -33,17 +35,13 @@ export default async function MetricDetailPage({
 
   if (!metric) return <div>Metric Not Found</div>;
 
-  const statusStyles = {
-    healthy: 'bg-success/10 text-success border-success/20',
-    warning: 'bg-warning/10 text-warning border-warning/20',
-    critical: 'bg-destructive/10 text-destructive border-destructive/20',
-  };
+  const statusInfo = getStatusStyles(metric.status);
 
   return (
     <div className="animate-in fade-in space-y-8 pb-12 duration-700">
       <div className="space-y-6">
         <Link
-          href="/metrics"
+          href={ROUTES.DASHBOARD.METRICS}
           className="text-muted-foreground inline-flex items-center gap-1 text-sm font-medium transition-colors hover:text-primary"
         >
           <ChevronLeft className="h-4 w-4" /> Back to Metrics
@@ -57,7 +55,7 @@ export default async function MetricDetailPage({
               </h1>
               <span
                 className={`rounded-full border px-2.5 py-0.5 text-[10px] font-bold uppercase ${
-                  statusStyles[metric.status as keyof typeof statusStyles]
+                  statusInfo.pill
                 }`}
               >
                 {metric.status}
@@ -105,7 +103,7 @@ export default async function MetricDetailPage({
           <TrendChart
             data={
               trendData?.data.map((d) => ({
-                date: d.date,
+                date: String(d.date),
                 value: d.value,
               })) || []
             }

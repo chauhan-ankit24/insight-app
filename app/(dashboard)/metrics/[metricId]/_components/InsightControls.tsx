@@ -3,27 +3,22 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import { BarChart2, Clock } from 'lucide-react';
 import { ActionButton } from '@/app/components/ui/ActionButton';
+import { DATA_GRAINS, DATA_RANGES } from '@/app/constants';
+import { getValidGrainForRange, isGrainIncompatible } from '@/lib/utils/metrics-utils';
 
 export function InsightControls() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const currentGrain = searchParams.get('grain') || 'daily';
-  const currentRange = searchParams.get('range') || '30';
+  const currentGrain = searchParams.get('grain') || DATA_GRAINS.DAILY;
+  const currentRange = searchParams.get('range') || DATA_RANGES['30D'];
 
-  const handleUpdate = (key: string, value: string) => {
+  const handleUpdate = (key: 'grain' | 'range', value: string) => {
     const params = new URLSearchParams(searchParams.toString());
 
     if (key === 'range') {
       params.set('range', value);
-      const rangeInt = parseInt(value);
-
-      if (rangeInt <= 7 && (currentGrain === 'weekly' || currentGrain === 'monthly')) {
-        params.set('grain', 'daily');
-      }
-      if (rangeInt <= 30 && currentGrain === 'monthly') {
-        params.set('grain', 'daily');
-      }
+      params.set('grain', getValidGrainForRange(currentGrain, value));
     } else {
       params.set(key, value);
     }
@@ -31,23 +26,16 @@ export function InsightControls() {
     router.push(`?${params.toString()}`, { scroll: false });
   };
 
-  const isGrainDisabled = (grainId: string) => {
-    const rangeInt = parseInt(currentRange);
-    if (rangeInt <= 7 && (grainId === 'weekly' || grainId === 'monthly')) return true;
-    if (rangeInt <= 30 && grainId === 'monthly') return true;
-    return false;
-  };
-
-  const grains = [
-    { id: 'daily', label: 'Day' },
-    { id: 'weekly', label: 'Week' },
-    { id: 'monthly', label: 'Month' },
+  const grainOptions = [
+    { id: DATA_GRAINS.DAILY, label: 'Day' },
+    { id: DATA_GRAINS.WEEKLY, label: 'Week' },
+    { id: DATA_GRAINS.MONTHLY, label: 'Month' },
   ];
 
-  const ranges = [
-    { id: '7', label: '7D' },
-    { id: '30', label: '30D' },
-    { id: '90', label: '90D' },
+  const rangeOptions = [
+    { id: DATA_RANGES['7D'], label: '7D' },
+    { id: DATA_RANGES['30D'], label: '30D' },
+    { id: DATA_RANGES['90D'], label: '90D' },
   ];
 
   return (
@@ -59,8 +47,8 @@ export function InsightControls() {
           Frequency
         </label>
         <div className="flex gap-2">
-          {grains.map((g) => {
-            const disabled = isGrainDisabled(g.id);
+          {grainOptions.map((g) => {
+            const disabled = isGrainIncompatible(g.id, currentRange);
             return (
               <ActionButton
                 key={g.id}
@@ -88,7 +76,7 @@ export function InsightControls() {
           Time Range
         </label>
         <div className="flex gap-2">
-          {ranges.map((r) => (
+          {rangeOptions.map((r) => (
             <ActionButton
               key={r.id}
               onClick={() => handleUpdate('range', r.id)}

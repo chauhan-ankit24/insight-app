@@ -5,6 +5,8 @@ import { ActionButton } from '@/app/components/ui/ActionButton';
 import { generateMetricsCSV } from '@/lib/utils/exportMetrics';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState, useTransition } from 'react';
+import { MetricFilter } from '@/lib/types/metrics';
+import { METRIC_FILTERS } from '@/app/constants';
 
 export function MetricsHeader() {
   const router = useRouter();
@@ -15,9 +17,9 @@ export function MetricsHeader() {
   const [searchValue, setSearchValue] = useState(searchParams.get('q') || '');
   const [isTyping, setIsTyping] = useState(false);
 
-  const updatePath = (key: string, value: string) => {
+  const updatePath = (key: string, value: MetricFilter) => {
     const params = new URLSearchParams(searchParams.toString());
-    if (value && value !== 'all') {
+    if (value && value !== METRIC_FILTERS.ALL) {
       params.set(key, value);
     } else {
       params.delete(key);
@@ -59,7 +61,7 @@ export function MetricsHeader() {
     });
   };
 
-  const currentFilter = searchParams.get('filter') || 'all';
+  const currentFilter = (searchParams.get('filter') as MetricFilter) || METRIC_FILTERS.ALL;
 
   const handleExport = () => {
     startExportTransition(async () => {
@@ -124,24 +126,24 @@ export function MetricsHeader() {
           {/* Segmented Filter Control */}
           <div className="flex gap-2">
             <ActionButton
-              onClick={() => updatePath('filter', 'all')}
-              className={`${currentFilter === 'all' ? 'bg-primary/20 text-primary' : 'text-muted-foreground bg-transparent hover:text-foreground'}`}
+              onClick={() => updatePath('filter', METRIC_FILTERS.ALL)}
+              className={`${currentFilter === METRIC_FILTERS.ALL ? 'bg-primary/20 text-primary' : 'text-muted-foreground bg-transparent hover:text-foreground'}`}
             >
               <LayoutGrid className="h-3.5 w-3.5" />
               All
             </ActionButton>
 
             <ActionButton
-              onClick={() => updatePath('filter', 'top')}
-              className={`${currentFilter === 'top' ? 'bg-success/20 text-success' : 'text-muted-foreground bg-transparent hover:text-foreground'}`}
+              onClick={() => updatePath('filter', METRIC_FILTERS.TOP)}
+              className={`${currentFilter === METRIC_FILTERS.TOP ? 'bg-success/20 text-success' : 'text-muted-foreground bg-transparent hover:text-foreground'}`}
             >
               <TrendingUp className="h-3.5 w-3.5" />
               Gainers
             </ActionButton>
 
             <ActionButton
-              onClick={() => updatePath('filter', 'under')}
-              className={`${currentFilter === 'under' ? 'bg-destructive/20 text-destructive' : 'text-muted-foreground bg-transparent hover:text-foreground'}`}
+              onClick={() => updatePath('filter', METRIC_FILTERS.UNDER)}
+              className={`${currentFilter === METRIC_FILTERS.UNDER ? 'bg-destructive/20 text-destructive' : 'text-muted-foreground bg-transparent hover:text-foreground'}`}
             >
               <TrendingDown className="h-3.5 w-3.5" />
               Losers

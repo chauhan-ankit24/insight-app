@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import { ROUTES } from '../constants/routes';
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -41,11 +42,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    const protectedRoutes = ['/metrics', '/settings'];
+    const protectedRoutes = [ROUTES.DASHBOARD.METRICS, ROUTES.DASHBOARD.SETTINGS];
     const isProtectedRoute = protectedRoutes.some((route) => pathname.startsWith(route));
 
     if (!isLoading && !isAuthenticated && isProtectedRoute) {
-      router.replace('/login');
+      router.replace(ROUTES.LOGIN);
     }
   }, [isAuthenticated, isLoading, pathname, router]);
 
@@ -57,8 +58,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       setUserName(name);
       setIsAuthenticated(true);
-
-      router.push('/metrics');
+      router.push(ROUTES.DASHBOARD.METRICS);
     }
   };
 
@@ -68,7 +68,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem('isAuthenticated');
     localStorage.removeItem('userCredentials');
     setIsAuthenticated(false);
-    router.push('/login');
+    router.push(ROUTES.LOGIN);
   };
 
   return (

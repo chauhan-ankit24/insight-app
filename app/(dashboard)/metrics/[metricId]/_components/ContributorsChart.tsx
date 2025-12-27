@@ -1,7 +1,8 @@
 'use client';
 
+import { getIndexedChartStyle, resolveEntryColor } from '@/lib/utils/style-utils';
 import { SearchX } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import {
   BarChart,
   Bar,
@@ -20,19 +21,6 @@ interface ContributorsChartProps {
 
 export function ContributorsChart({ data, keys }: ContributorsChartProps) {
   const [activeKey, setActiveKey] = useState<string | null>(null);
-
-  const spectralColors = useMemo(
-    () => [
-      'hsl(var(--primary))',
-      'hsl(var(--chart-cyan))',
-      'hsl(var(--success))',
-      'hsl(var(--warning))',
-      'hsl(var(--chart-violet))',
-      'hsl(var(--chart-sky))',
-      'hsl(var(--destructive))',
-    ],
-    []
-  );
 
   if (!data || data.length === 0) {
     return (
@@ -62,9 +50,7 @@ export function ContributorsChart({ data, keys }: ContributorsChartProps) {
         <BarChart data={data} margin={{ top: 20, right: 10, left: 10, bottom: 0 }}>
           <defs>
             {keys.map((key, index) => {
-              const baseColor = spectralColors[index % spectralColors.length];
-
-              const opacity = index >= spectralColors.length ? 0.6 : 1;
+              const { color, opacity } = getIndexedChartStyle(index);
 
               return (
                 <linearGradient
@@ -75,8 +61,8 @@ export function ContributorsChart({ data, keys }: ContributorsChartProps) {
                   x2="0"
                   y2="1"
                 >
-                  <stop offset="0%" stopColor={baseColor} stopOpacity={opacity * 0.8} />
-                  <stop offset="100%" stopColor={baseColor} stopOpacity={opacity} />
+                  <stop offset="0%" stopColor={color} stopOpacity={opacity * 0.8} />
+                  <stop offset="100%" stopColor={color} stopOpacity={opacity} />
                 </linearGradient>
               );
             })}
@@ -128,28 +114,27 @@ export function ContributorsChart({ data, keys }: ContributorsChartProps) {
                       {label}
                     </p>
                     <div className="space-y-2.5">
-                      {[...payload].reverse().map((entry, index) => (
-                        <div key={index} className="flex items-center justify-between gap-8">
-                          <div className="flex items-center gap-2">
-                            <div
-                              className="h-2 w-2 rounded-full"
-                              style={{
-                                backgroundColor: entry.color?.includes('url')
-                                  ? spectralColors[
-                                      (keys.length - 1 - index) % spectralColors.length
-                                    ]
-                                  : entry.color,
-                              }}
-                            />
-                            <span className="text-xs font-medium text-foreground/70">
-                              {entry.name}
+                      {[...payload].reverse().map((entry, index) => {
+                        const displayColor = resolveEntryColor(entry.color, index, keys.length);
+                        return (
+                          <div key={index} className="flex items-center justify-between gap-8">
+                            <div className="flex items-center gap-2">
+                              <div
+                                className="h-2 w-2 rounded-full"
+                                style={{
+                                  backgroundColor: displayColor,
+                                }}
+                              />
+                              <span className="text-xs font-medium text-foreground/70">
+                                {entry.name}
+                              </span>
+                            </div>
+                            <span className="text-xs font-black tabular-nums text-foreground">
+                              {entry.value?.toLocaleString()}
                             </span>
                           </div>
-                          <span className="text-xs font-black tabular-nums text-foreground">
-                            {entry.value?.toLocaleString()}
-                          </span>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
                 );

@@ -11,7 +11,7 @@ jobs:
   lint-and-format:
     runs-on: ubuntu-latest
     permissions:
-      contents: write 
+      contents: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -37,7 +37,7 @@ jobs:
       - name: Commit Auto-Fixes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "style: auto-fix linting and formatting"
+          commit_message: 'style: auto-fix linting and formatting'
         env:
           HUSKY: 0
 

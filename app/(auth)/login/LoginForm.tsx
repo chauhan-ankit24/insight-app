@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/app/contexts/AuthContext';
 import { Lock, User, Loader2 } from 'lucide-react';
 import { ActionButton } from '@/app/components/ui/ActionButton';
+import { ROUTES } from '@/app/constants/routes';
 
 export default function LoginForm() {
   const [name, setName] = useState('');
@@ -15,7 +16,7 @@ export default function LoginForm() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      router.push('/metrics');
+      router.push(ROUTES.DASHBOARD.METRICS);
     }
   }, [isAuthenticated, router]);
 
@@ -28,12 +29,12 @@ export default function LoginForm() {
   };
 
   return (
-    <div className="rounded-[32px] border border-white/40 bg-background/20 p-8 shadow-button backdrop-blur-sm">
+    <div className="rounded-[32px] border border-white/40 bg-white/5 p-8 shadow-button backdrop-blur-sm">
       <form className="space-y-5" onSubmit={handleSubmit}>
         <div className="space-y-2">
           <label
             htmlFor="name"
-            className="text-muted-foreground/80 ml-1 text-[11px] font-black uppercase tracking-widest"
+            className="ml-1 text-[11px] font-black uppercase tracking-widest text-black/80"
           >
             Identity
           </label>
@@ -44,7 +45,7 @@ export default function LoginForm() {
               type="text"
               required
               placeholder="Enter your name"
-              className="border-border/50 flex h-11 w-full rounded-xl border bg-background/50 px-10 py-2 text-sm outline-none transition-all focus:border-primary/50 focus:ring-4 focus:ring-primary/5"
+              className="border-border/50 flex h-11 w-full rounded-xl border bg-white/50 px-10 py-2 text-sm text-black outline-none transition-all focus:border-primary/50 focus:ring-4 focus:ring-primary/5"
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
@@ -54,7 +55,7 @@ export default function LoginForm() {
         <div className="space-y-2">
           <label
             htmlFor="password"
-            className="text-muted-foreground/80 ml-1 text-[11px] font-black uppercase tracking-widest"
+            className="ml-1 text-[11px] font-black uppercase tracking-widest text-black/80"
           >
             Access Key
           </label>
@@ -65,7 +66,7 @@ export default function LoginForm() {
               type="password"
               required
               placeholder="••••••••"
-              className="border-border/50 flex h-11 w-full rounded-xl border bg-background/50 px-10 py-2 text-sm outline-none transition-all focus:border-primary/50 focus:ring-4 focus:ring-primary/5"
+              className="border-border/50 flex h-11 w-full rounded-xl border bg-white/50 px-10 py-2 text-sm tracking-widest text-black outline-none transition-all focus:border-primary/50 focus:ring-4 focus:ring-primary/5"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
