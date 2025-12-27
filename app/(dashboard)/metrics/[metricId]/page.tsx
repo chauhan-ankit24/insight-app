@@ -1,9 +1,10 @@
 import Link from 'next/link';
-import { getMetricById, getMetricTrend } from '@/lib/data/resolvers';
+import { getMetricById, getMetricContributors, getMetricTrend } from '@/lib/data/resolvers';
 import { InsightControls } from './_components/InsightControls';
 import { TrendChart } from './_components/TrendChart';
 import { ContributorsChart } from './_components/ContributorsChart';
 import { ChevronLeft, Tag, Folder } from 'lucide-react';
+import { formatDate } from '@/lib/utils/formatters';
 
 export default async function MetricDetailPage({
   params,
@@ -13,34 +14,24 @@ export default async function MetricDetailPage({
   searchParams: Promise<{ grain?: string; range?: string }>;
 }) {
   const { metricId } = await params;
-  const resolvedSearchParams = await searchParams;
+  const { grain = 'daily', range = '30' } = await searchParams;
+  const rangeNum = Number(range);
 
-  const grain = resolvedSearchParams.grain || 'daily';
-  const range = Number(resolvedSearchParams.range) || 30;
-
-  const [metric, trendData] = await Promise.all([
+  const [metric, trendData, contributors] = await Promise.all([
     getMetricById(metricId),
-    getMetricTrend(metricId, grain, range),
+
+    getMetricTrend(metricId, grain, rangeNum).catch((err) => {
+      console.error('Trend API Error:', err);
+      return null;
+    }),
+
+    getMetricContributors(metricId, rangeNum).catch((err) => {
+      console.error('Contributors Error:', err);
+      return { data: [], keys: [] };
+    }),
   ]);
 
   if (!metric) return <div>Metric Not Found</div>;
-
-  // Get all historical contributor data (e.g., 90 days)
-  const allContributors = metric.contributorsData;
-
-  // Filter based on Range
-  let displayContributors = [];
-
-  if (range <= 7) {
-    // Show last 7 days - 7 bars total
-    displayContributors = allContributors.slice(-7);
-  } else if (range <= 30) {
-    // Show last 30 days, but perhaps pick every 3rd day to keep 10 clean bars
-    displayContributors = allContributors.slice(-30).filter((_, i) => i % 3 === 0);
-  } else {
-    // Show last 90 days, pick every 7th day (Weekly view) - ~12 clean bars
-    displayContributors = allContributors.slice(-90).filter((_, i) => i % 7 === 0);
-  }
 
   const statusStyles = {
     healthy: 'bg-success/10 text-success border-success/20',
@@ -90,6 +81,9 @@ export default async function MetricDetailPage({
 
             <p className="text-muted-foreground max-w-2xl text-base leading-relaxed">
               {metric.description}
+              <span className="ml-2 hidden text-sm opacity-70 md:inline">
+                Last Updated: {formatDate(new Date(metric.lastUpdated))}
+              </span>
             </p>
           </div>
 
@@ -125,7 +119,7 @@ export default async function MetricDetailPage({
               Contributors
             </h3>
           </div>
-          <ContributorsChart data={displayContributors} keys={metric.contributorKeys} />
+          <ContributorsChart data={contributors.data} keys={contributors.keys} />
         </div>
       </div>
     </div>

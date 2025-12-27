@@ -25,8 +25,8 @@ export function MicroTrendChart({
 
   // 2. Calculate Average
   const avgValue = useMemo(() => {
-    if (!data.length) return 0;
-    return data.reduce((acc, curr) => acc + curr.value, 0) / data.length;
+    if (!data?.length) return 0;
+    return data.reduce((acc, curr) => acc + curr.value, 0) / data?.length;
   }, [data]);
 
   return (

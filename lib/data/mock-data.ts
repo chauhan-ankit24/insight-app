@@ -1,4 +1,4 @@
-import { Metric, MetricContributor, ContributorSnapshot } from '../types/metrics';
+import { Metric, ContributorSnapshot } from '../types/metrics';
 
 const generateTrendData = (days: number, startValue: number, trend: 'up' | 'down' | 'volatile') => {
   const data = [];
@@ -205,23 +205,5 @@ export const mockMetrics: Metric[] = [
     contributorKeys: ['Promoters', 'Passives', 'Detractors'],
     contributorsData: generateDailyContributors(90, ['Promoters', 'Passives', 'Detractors'], 1000),
     trendData: generateTrendData(90, 75, 'down'),
-  },
-];
-
-export const mockContributors: MetricContributor[] = [
-  {
-    id: '1',
-    name: 'Marketing Campaign',
-    contribution: 40,
-  },
-  {
-    id: '2',
-    name: 'Product Updates',
-    contribution: 30,
-  },
-  {
-    id: '3',
-    name: 'Customer Support',
-    contribution: 30,
   },
 ];

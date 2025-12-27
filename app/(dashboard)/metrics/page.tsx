@@ -1,41 +1,26 @@
-'use client';
+import { getSummaryMetrics, getMetrics } from '@/lib/data/resolvers';
+import { MetricTable } from './_components/MetricsTable';
+import { SummaryCards } from './_components/MetricsSummaryCards';
+import { MetricsHeader } from './_components/MetricsHeader';
 
-import { useState, useMemo } from 'react';
-import { mockMetrics } from '@/lib/data/mock-data';
-import { MetricTable } from '@/app/(dashboard)/metrics/_components/MetricsTable';
-import { SummaryCards } from '@/app/(dashboard)/metrics/_components/MetricsSummaryCards';
-import { MetricsHeader } from '@/app/(dashboard)/metrics/_components/MetricsHeader';
-import { exportMetrics } from '@/lib/utils/exportMetrics';
+export default async function MetricsPage() {
+  const summaryData = await getSummaryMetrics().catch((err) => {
+    console.error('Summary API failed:', err);
+    return [];
+  });
 
-export default function MetricsPage() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filter, setFilter] = useState<'all' | 'top' | 'under' | 'critical'>('all');
+  const tableData = await getMetrics().catch((err) => {
+    console.error('Table API failed:', err);
+    return [];
+  });
 
-  const filteredMetrics = useMemo(() => {
-    return mockMetrics.filter((m) => {
-      const matchesSearch =
-        m.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        m.category?.toLowerCase().includes(searchQuery.toLowerCase());
-
-      if (filter === 'top') return matchesSearch && m.changePercent > 0;
-      if (filter === 'under') return matchesSearch && m.changePercent < 0;
-      if (filter === 'critical') return matchesSearch && m.status === 'critical';
-      return matchesSearch;
-    });
-  }, [searchQuery, filter]);
+  // throw new Error("DATABASE_CONNECTION_TIMEOUT");
 
   return (
     <div className="relative space-y-8">
-      <MetricsHeader
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        filter={filter}
-        setFilter={setFilter}
-        onExport={() => exportMetrics(filteredMetrics)}
-      />
-
-      <SummaryCards metrics={mockMetrics} />
-      <MetricTable metrics={filteredMetrics} />
+      <MetricsHeader metrics={tableData} />
+      <SummaryCards metrics={summaryData} />
+      <MetricTable metrics={tableData} />
     </div>
   );
 }

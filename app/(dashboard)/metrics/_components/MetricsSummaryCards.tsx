@@ -1,47 +1,18 @@
 'use client';
 
-import { Metric } from '@/lib/types/metrics';
 import { formatCurrency, formatNumberCompact } from '@/lib/utils/formatters';
 import { ArrowUpRight, ArrowDownRight, Minus } from 'lucide-react';
 import { MicroTrendChart } from './MicroTrendChart';
-import { useMemo } from 'react';
 import { useRouter } from 'next/navigation';
+import { SummaryMetric } from '@/lib/data/resolvers';
 
-export function SummaryCards({ metrics }: { metrics: Metric[] }) {
+export function SummaryCards({ metrics }: { metrics: SummaryMetric[] }) {
   const router = useRouter();
-
-  const summaryData = useMemo(() => {
-    if (!metrics || metrics.length === 0) return [];
-
-    const healthyMetric = metrics
-      .filter((m) => m.status === 'healthy')
-      .sort((a, b) => b.changePercent - a.changePercent)[0];
-
-    const criticalMetric = metrics
-      .filter((m) => m.status === 'critical')
-      .sort((a, b) => a.changePercent - b.changePercent)[0];
-
-    const warningMetric = metrics
-      .filter((m) => m.status === 'warning')
-      .sort((a, b) => Math.abs(b.changePercent) - Math.abs(a.changePercent))[0];
-
-    const results = [];
-    if (healthyMetric) results.push({ ...healthyMetric, summaryLabel: 'Best Performer' });
-    if (criticalMetric) results.push({ ...criticalMetric, summaryLabel: 'Action Required' });
-    if (warningMetric) results.push({ ...warningMetric, summaryLabel: 'Needs Attention' });
-
-    if (results.length < 3) {
-      const usedIds = results.map((r) => r.id);
-      const remaining = metrics.filter((m) => !usedIds.includes(m.id));
-      results.push(...remaining.slice(0, 3 - results.length));
-    }
-
-    return results.slice(0, 3);
-  }, [metrics]);
+  console.log('summary', metrics);
 
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-      {summaryData.map((metric) => {
+      {metrics?.map((metric) => {
         const styles = {
           up: {
             bg: 'bg-success/10',
@@ -97,7 +68,7 @@ export function SummaryCards({ metrics }: { metrics: Metric[] }) {
                 </div>
                 <div className="mt-4 flex-1">
                   <MicroTrendChart
-                    data={metric.trendData.map((d) => ({ value: d.value }))}
+                    data={metric.trendData?.map((d) => ({ value: d.value }))}
                     status={metric.status}
                   />
                 </div>

@@ -1,65 +1,91 @@
-import { Metric, MetricTrend, MetricContributor } from '../types/metrics';
-import { mockMetrics, mockContributors } from './mock-data';
+import { MetricTrend, Metric } from '../types/metrics';
 
-export function getMetricById(metricId: string): Metric | null {
+export type SummaryMetric = Metric & { summaryLabel?: string };
+import { mockMetrics } from './mock-data';
+
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+// Simulate fetching a metric by its ID API
+export async function getMetricById(metricId: string) {
+  await delay(800);
   const metric = mockMetrics.find((m) => m.id === metricId);
-  if (metric) return metric;
 
-  // Return a default metric if not found
+  if (!metric) throw new Error('Metric not found');
+
+  const {
+    trendData,
+    sparklineData,
+    contributorKeys,
+    contributorsData,
+    changePercent,
+    value,
+    ...lightMetric
+  } = metric;
+
+  void trendData;
+  void sparklineData;
+  void contributorKeys;
+  void contributorsData;
+  void changePercent;
+  void value;
+
+  return lightMetric;
+}
+
+// Simulate fetching metric contributors API
+export async function getMetricContributors(metricId: string, range: number = 7) {
+  await delay(900);
+
+  const metric = mockMetrics.find((m) => m.id === metricId);
+  if (!metric) return { data: [], keys: [] };
+
+  const allContributors = metric.contributorsData;
+
+  let displayContributors = [];
+
+  if (range <= 7) {
+    displayContributors = allContributors.slice(-7);
+  } else if (range <= 30) {
+    displayContributors = allContributors.slice(-30).filter((_, i) => i % 3 === 0);
+  } else {
+    displayContributors = allContributors.slice(-90).filter((_, i) => i % 7 === 0);
+  }
+
+  const dynamicKeys =
+    displayContributors?.length > 0
+      ? Object.keys(displayContributors[0]).filter((key) => key !== 'timestamp')
+      : [];
+
   return {
-    id: metricId,
-    name: 'Unknown Metric',
-    description: 'This metric was not found in the data.',
-    value: 0,
-    unit: 'N/A',
-    type: 'SIMPLE',
-    category: 'Product',
-    status: 'critical',
-    changePercent: 0,
-    lastUpdated: new Date().toISOString(),
-    trend: 'neutral',
-    sparklineData: [],
-    contributorKeys: ['Channel A', 'Channel B', 'Channel C'],
-    contributorsData: [
-      { timestamp: 'Jan', 'Channel A': 1000, 'Channel B': 800, 'Channel C': 600 },
-      { timestamp: 'Feb', 'Channel A': 1200, 'Channel B': 900, 'Channel C': 700 },
-      { timestamp: 'Mar', 'Channel A': 1100, 'Channel B': 1000, 'Channel C': 800 },
-      { timestamp: 'Apr', 'Channel A': 1300, 'Channel B': 1100, 'Channel C': 900 },
-      { timestamp: 'May', 'Channel A': 1400, 'Channel B': 1200, 'Channel C': 1000 },
-      { timestamp: 'Jun', 'Channel A': 1500, 'Channel B': 1300, 'Channel C': 1100 },
-    ],
-    trendData: [],
+    data: displayContributors,
+    keys: dynamicKeys,
   };
 }
 
+// Simulate fetching metric trend data API
 export async function getMetricTrend(
   metricId: string,
   grain: string = 'daily',
-  range: number = 30
+  range: number = 7
 ): Promise<MetricTrend | null> {
   const metric = mockMetrics.find((m) => m.id === metricId);
   if (!metric) return null;
 
-  // 1. Slice by Range first (get the raw daily data)
   const rawData = metric.trendData.slice(-range);
 
-  // 2. Aggregate by Grain
   const aggregatedData = rawData.reduce((acc: { date: string; value: number }[], curr) => {
     let key: string;
     const d = new Date(curr.date);
 
     if (grain === 'weekly') {
-      // Group by Year + Week Number
       const startOfYear = new Date(d.getFullYear(), 0, 1);
       const week = Math.ceil(
         ((d.getTime() - startOfYear.getTime()) / 86400000 + startOfYear.getDay() + 1) / 7
       );
       key = `Week ${week}, ${d.getFullYear()}`;
     } else if (grain === 'monthly') {
-      // Group by Month Name + Year
       key = d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
     } else {
-      // Default: Daily
       key = d.toISOString();
     }
 
@@ -78,7 +104,49 @@ export async function getMetricTrend(
   };
 }
 
-export async function getMetricContributors(): Promise<MetricContributor[]> {
-  // Mock implementation: return sample contributors
-  return mockContributors;
+export async function getSummaryMetrics(): Promise<SummaryMetric[]> {
+  await delay(1000);
+  const metrics = mockMetrics;
+
+  if (!metrics || metrics?.length === 0) return [];
+
+  const healthyMetric = [...metrics]
+    .filter((m) => m.status === 'healthy')
+    .sort((a, b) => b.changePercent - a.changePercent)[0];
+
+  const criticalMetric = [...metrics]
+    .filter((m) => m.status === 'critical')
+    .sort((a, b) => a.changePercent - b.changePercent)[0];
+
+  const warningMetric = [...metrics]
+    .filter((m) => m.status === 'warning')
+    .sort((a, b) => Math.abs(b.changePercent) - Math.abs(a.changePercent))[0];
+
+  const rawResults: SummaryMetric[] = [];
+
+  if (healthyMetric) rawResults.push({ ...healthyMetric, summaryLabel: 'Best Performer' });
+  if (criticalMetric) rawResults.push({ ...criticalMetric, summaryLabel: 'Action Required' });
+  if (warningMetric) rawResults.push({ ...warningMetric, summaryLabel: 'Needs Attention' });
+
+  if (rawResults?.length < 3) {
+    const usedIds = rawResults?.map((r) => r.id);
+    const remaining = metrics.filter((m) => !usedIds.includes(m.id));
+    rawResults.push(...remaining.slice(0, 3 - rawResults?.length));
+  }
+
+  return rawResults.slice(0, 3)?.map(({ contributorsData, ...rest }) => {
+    void contributorsData;
+    return rest as SummaryMetric;
+  });
+}
+
+// Simulate fetching all metrics for the table view API
+export async function getMetrics(): Promise<Metric[]> {
+  await delay(1200);
+
+  const metrics = mockMetrics;
+
+  if (!metrics) return [];
+
+  return metrics;
 }
