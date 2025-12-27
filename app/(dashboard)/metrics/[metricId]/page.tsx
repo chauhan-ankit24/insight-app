@@ -7,6 +7,27 @@ import { ChevronLeft, Tag, Folder } from 'lucide-react';
 import { formatDate } from '@/lib/utils/formatters';
 import { ROUTES } from '@/app/constants/routes';
 import { getStatusStyles } from '@/lib/utils/style-utils';
+import { Metadata } from 'next';
+
+type Props = { params: { metricId: string } };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const metric = await getMetricById(params.metricId);
+
+  if (!metric) {
+    return { title: 'Metric Not Found', robots: { index: false } };
+  }
+
+  return {
+    title: metric.name,
+    description: `Deep dive into ${metric.name} performance. ${metric.description}`,
+    openGraph: {
+      title: `${metric.name} Trends`,
+      description: `Analyzing real-time data for ${metric.name}.`,
+      images: [`/api/og?title=${metric.name}`],
+    },
+  };
+}
 
 export default async function MetricDetailPage({
   params,
