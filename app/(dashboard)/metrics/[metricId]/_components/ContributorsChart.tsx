@@ -1,0 +1,175 @@
+'use client';
+
+import { useMemo, useState } from 'react';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts';
+
+interface ContributorsChartProps {
+  data: { [key: string]: string | number }[];
+  keys: string[];
+}
+
+export function ContributorsChart({ data, keys }: ContributorsChartProps) {
+  const [activeKey, setActiveKey] = useState<string | null>(null);
+
+  const spectralColors = useMemo(
+    () => [
+      'hsl(var(--primary))',
+      'hsl(var(--chart-cyan))',
+      'hsl(var(--success))',
+      'hsl(var(--warning))',
+      'hsl(var(--chart-violet))',
+      'hsl(var(--chart-sky))',
+      'hsl(var(--destructive))',
+    ],
+    []
+  );
+
+  if (!data || data.length === 0) return null;
+
+  return (
+    <div className="h-[350px] w-full">
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart data={data} margin={{ top: 20, right: 10, left: 10, bottom: 0 }}>
+          <defs>
+            {keys.map((key, index) => {
+              const baseColor = spectralColors[index % spectralColors.length];
+
+              const opacity = index >= spectralColors.length ? 0.6 : 1;
+
+              return (
+                <linearGradient
+                  key={`grad-${key}`}
+                  id={`grad-${index}`}
+                  x1="0"
+                  y1="0"
+                  x2="0"
+                  y2="1"
+                >
+                  <stop offset="0%" stopColor={baseColor} stopOpacity={opacity * 0.8} />
+                  <stop offset="100%" stopColor={baseColor} stopOpacity={opacity} />
+                </linearGradient>
+              );
+            })}
+          </defs>
+
+          <CartesianGrid
+            strokeDasharray="4 4"
+            vertical={false}
+            stroke="hsl(var(--border))"
+            opacity={0.3}
+          />
+
+          <XAxis
+            dataKey="timestamp"
+            axisLine={false}
+            tickLine={false}
+            tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))', fontWeight: 600 }}
+            dy={10}
+            tickFormatter={(value) => {
+              const date = new Date(value);
+              return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            }}
+            interval="preserveStartEnd"
+            minTickGap={20}
+          />
+
+          <YAxis
+            axisLine={false}
+            tickLine={false}
+            tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))', fontWeight: 500 }}
+            width={40}
+            domain={[0, 'auto']}
+            padding={{ top: 10 }}
+            tickFormatter={(value) => {
+              if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M`;
+              if (value >= 1000) return `${(value / 1000).toFixed(0)}K`;
+              return value;
+            }}
+            allowDecimals={false}
+          />
+
+          <Tooltip
+            cursor={{ fill: 'hsl(var(--primary))', opacity: 0.05 }}
+            content={({ active, payload, label }) => {
+              if (active && payload && payload.length) {
+                return (
+                  <div className="border-border rounded-2xl border bg-background/95 p-4 shadow-2xl backdrop-blur-xl">
+                    <p className="text-muted-foreground mb-3 text-[10px] font-black uppercase tracking-widest">
+                      {label}
+                    </p>
+                    <div className="space-y-2.5">
+                      {[...payload].reverse().map((entry, index) => (
+                        <div key={index} className="flex items-center justify-between gap-8">
+                          <div className="flex items-center gap-2">
+                            <div
+                              className="h-2 w-2 rounded-full"
+                              style={{
+                                backgroundColor: entry.color?.includes('url')
+                                  ? spectralColors[
+                                      (keys.length - 1 - index) % spectralColors.length
+                                    ]
+                                  : entry.color,
+                              }}
+                            />
+                            <span className="text-xs font-medium text-foreground/70">
+                              {entry.name}
+                            </span>
+                          </div>
+                          <span className="text-xs font-black tabular-nums text-foreground">
+                            {entry.value?.toLocaleString()}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              }
+              return null;
+            }}
+          />
+
+          <Legend
+            verticalAlign="top"
+            align="right"
+            iconType="circle"
+            onMouseEnter={(e) => setActiveKey(e.dataKey as string)}
+            onMouseLeave={() => setActiveKey(null)}
+            formatter={(value) => (
+              <span
+                className={`text-[10px] font-bold tracking-widest transition-opacity duration-200 ${
+                  activeKey && activeKey !== value ? 'opacity-30' : 'opacity-100'
+                }`}
+              >
+                {value}
+              </span>
+            )}
+            wrapperStyle={{ paddingBottom: '30px', textTransform: 'uppercase' }}
+          />
+
+          {keys.map((key, index) => (
+            <Bar
+              key={key}
+              dataKey={key}
+              stackId="a"
+              fill={`url(#grad-${index})`}
+              barSize={20}
+              // Only top segment gets rounded corners
+              radius={index === keys.length - 1 ? [4, 4, 0, 0] : [0, 0, 0, 0]}
+              className="transition-all duration-500"
+              opacity={activeKey === null || activeKey === key ? 1 : 0.15}
+            />
+          ))}
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}
