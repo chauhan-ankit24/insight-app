@@ -32,7 +32,10 @@ export interface Metric {
 
 export interface MetricTrend {
   metricId: string;
-  data: Point[];
+  data: {
+    date: string;
+    value: number;
+  }[];
 }
 export interface MetricTrendPoint {
   date: string;
