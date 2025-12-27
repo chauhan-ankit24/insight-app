@@ -2,10 +2,14 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
-  const authCookie = request.cookies.get('auth-token');
+  const token = request.cookies.get('auth-token');
+  const { pathname } = request.nextUrl;
 
-  if (!authCookie && request.nextUrl.pathname.startsWith('/metrics')) {
-    return NextResponse.redirect(new URL('/login', request.url));
+  const isProtectedRoute = pathname.startsWith('/metrics') || pathname.startsWith('/settings');
+
+  if (isProtectedRoute && !token) {
+    const loginUrl = new URL('/login', request.url);
+    return NextResponse.redirect(loginUrl);
   }
 
   return NextResponse.next();

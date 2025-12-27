@@ -11,8 +11,8 @@ export default function Home() {
           An application for generating and viewing multi-page insights and data visualizations.
         </p>
 
-        <ActionButton className="flex justify-center">
-          <Link href="/metrics">Enter Application</Link>
+        <ActionButton className="flex justify-center bg-primary/70">
+          <Link href="/login">Enter Application</Link>
         </ActionButton>
       </div>
     </div>

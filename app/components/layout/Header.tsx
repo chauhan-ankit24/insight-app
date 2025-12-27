@@ -7,7 +7,18 @@ import { LogOut } from 'lucide-react';
 import { ActionButton } from '@/app/components/ui/ActionButton';
 
 export function Header() {
-  const { userName, logout } = useAuth();
+  const { userName, logout, isAuthenticated, isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <header className="border-border/40 sticky top-0 z-40 flex h-16 w-full items-center justify-between border-b bg-background/95 px-6 backdrop-blur">
+        <div className="bg-muted h-8 w-32 animate-pulse rounded" />
+        <div className="bg-muted h-8 w-8 animate-pulse rounded-full" />
+      </header>
+    );
+  }
+
+  if (!isAuthenticated) return null;
 
   return (
     <header className="sticky top-0 z-50 w-full bg-header shadow-button">

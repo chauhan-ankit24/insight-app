@@ -1,10 +1,7 @@
-// NO 'use client' here.
 import { Header } from '../components/layout/Header';
 import { Sidebar } from '../components/layout/Sidebar';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  // This renders instantly on the server.
-  // No more "flashes" of null or loading states.
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-background text-foreground">
       <Header />

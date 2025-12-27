@@ -1,5 +1,6 @@
 'use client';
 
+import { SearchX } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import {
   BarChart,
@@ -33,7 +34,27 @@ export function ContributorsChart({ data, keys }: ContributorsChartProps) {
     []
   );
 
-  if (!data || data.length === 0) return null;
+  if (!data || data.length === 0) {
+    return (
+      <div className="border-muted/50 bg-muted/5 animate-in fade-in zoom-in-95 flex min-h-[400px] w-full flex-col items-center justify-center rounded-3xl border-2 border-dashed p-12 text-center duration-500">
+        <div className="relative mb-6">
+          <div className="absolute inset-0 scale-150 rounded-full bg-primary/5 blur-3xl" />
+
+          <SearchX className="text-muted-foreground/60 h-5 w-5" />
+        </div>
+
+        <div className="max-w-[280px] space-y-2">
+          <h3 className="text-xl font-black uppercase tracking-tight text-foreground">
+            No matches found
+          </h3>
+          <p className="text-muted-foreground text-sm font-medium leading-relaxed">
+            We couldn&apos;t find any metrics matching your current filters. Try
+            <span className="text-primary/80"> resetting your search</span>.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="h-[350px] w-full">
