@@ -18,7 +18,7 @@ const NavItem = memo(({ item, isActive }: { item: NavLink; isActive: boolean }) 
       {isActive && (
         <motion.div
           layoutId="activeTab"
-          className="absolute inset-0 rounded-xl bg-primary/10"
+          className="absolute inset-0 rounded-xl bg-primary/20"
           transition={{ type: 'spring', stiffness: 380, damping: 30 }}
         />
       )}

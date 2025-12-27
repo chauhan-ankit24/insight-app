@@ -38,7 +38,7 @@ export const getMetricById = (metricId: string) =>
     ['metric-detail', metricId],
     {
       revalidate: 3600,
-      tags: [`metric-${metricId}`],
+      tags: [`metric-${metricId}`, 'metrics'],
     }
   )();
 
@@ -73,10 +73,10 @@ export const getMetricContributors = (metricId: string, range: number = 7) =>
         keys: dynamicKeys,
       };
     },
-    ['metric-detail', metricId],
+    ['metric-contributors', metricId, range.toString()],
     {
       revalidate: 3600,
-      tags: [`metric-${metricId}`],
+      tags: [`metric-${metricId}`, 'contributors', 'metrics'],
     }
   )();
 
@@ -119,13 +119,14 @@ export const getMetricTrend = (metricId: string, grain: string = 'daily', range:
         data: aggregatedData,
       };
     },
-    ['metric-detail', metricId],
+    ['metric-trend', metricId, grain, range.toString()],
     {
       revalidate: 3600,
-      tags: [`metric-${metricId}`],
+      tags: [`metric-${metricId}`, 'trends'],
     }
   )();
 
+// Simulate fetching summary cards metric API
 export const getSummaryMetrics = unstable_cache(
   async (): Promise<SummaryMetric[]> => {
     await delay(1000);
@@ -165,22 +166,21 @@ export const getSummaryMetrics = unstable_cache(
   ['metric-detail'],
   {
     revalidate: 3600,
-    tags: ['summary-metrics'],
+    tags: ['summary-metrics', 'metrics'],
   }
 );
 
 // Simulate fetching all metrics for the table view API
-export const getMetrics = (filters?: { query?: string; category?: string }) =>
-  unstable_cache(
-    async () => {
-      const query = filters?.query || '';
-      const category = filters?.category || 'all';
+export const getMetrics = (filters?: { query?: string; category?: string }) => {
+  const query = filters?.query || '';
+  const category = filters?.category || 'all';
 
-      await delay(800); // Simulate DB latency
+  return unstable_cache(
+    async () => {
+      await delay(800);
 
       let filtered = [...mockMetrics];
 
-      // 1. Search Filter
       if (query) {
         const lowQ = query.toLowerCase();
         filtered = filtered.filter(
@@ -188,7 +188,6 @@ export const getMetrics = (filters?: { query?: string; category?: string }) =>
         );
       }
 
-      // 2. Category/Status Filter
       if (category !== 'all') {
         if (category === 'top') filtered = filtered.filter((m) => m.changePercent > 0);
         else if (category === 'under') filtered = filtered.filter((m) => m.changePercent < 0);
@@ -197,12 +196,16 @@ export const getMetrics = (filters?: { query?: string; category?: string }) =>
         else filtered = filtered.filter((m) => m.category === category);
       }
 
-      // Strip heavy data for the table
-      return filtered.map(({ trendData, contributorsData, ...rest }) => rest);
+      return filtered.map(({ trendData, contributorsData, ...rest }) => {
+        void trendData;
+        void contributorsData;
+        return rest;
+      });
     },
-    ['metrics-list', filters?.query || '', filters?.category || 'all'], // Unique key per search/filter combination
+    ['metrics-list', query, category],
     {
-      revalidate: 600, // Cache results for 10 minutes
-      tags: ['metrics'], // Global tag to purge all metric caches at once
+      revalidate: 600,
+      tags: ['metrics', `query-${query}`, `category-${category}`],
     }
   )();
+};
