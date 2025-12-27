@@ -1,5 +1,3 @@
-'use client';
-
 import { ThemeToggle } from '@/app/components/ThemeToggle';
 import { Bell, Languages, Palette, ShieldCheck, Mail } from 'lucide-react';
 

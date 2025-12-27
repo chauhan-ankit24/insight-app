@@ -3,22 +3,24 @@ import { MetricTable } from './_components/MetricsTable';
 import { SummaryCards } from './_components/MetricsSummaryCards';
 import { MetricsHeader } from './_components/MetricsHeader';
 
-export default async function MetricsPage() {
-  const summaryData = await getSummaryMetrics().catch((err) => {
-    console.error('Summary API failed:', err);
-    return [];
-  });
+type Props = {
+  searchParams: Promise<{ q?: string; filter?: string }>;
+};
 
-  const tableData = await getMetrics().catch((err) => {
-    console.error('Table API failed:', err);
-    return [];
-  });
+export default async function MetricsPage({ searchParams }: Props) {
+  const { q, filter } = await searchParams;
 
-  // throw new Error("DATABASE_CONNECTION_TIMEOUT");
+  const summaryPromise = getSummaryMetrics();
+  const tablePromise = getMetrics({ query: q, category: filter });
+
+  const [summaryData, tableData] = await Promise.all([
+    summaryPromise.catch(() => []),
+    tablePromise.catch(() => []),
+  ]);
 
   return (
     <div className="relative space-y-8">
-      <MetricsHeader metrics={tableData} />
+      <MetricsHeader />
       <SummaryCards metrics={summaryData} />
       <MetricTable metrics={tableData} />
     </div>

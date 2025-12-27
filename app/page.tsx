@@ -1,10 +1,7 @@
-'use client';
-
 import Link from 'next/link';
 import { ActionButton } from './components/ui/ActionButton';
 
 export default function Home() {
-  // throw new Error("DATABASE_CONNECTION_TIMEOUT");
   return (
     <div className="login-bg flex min-h-screen items-center justify-center p-6">
       <div className="max-w-xl text-center backdrop-blur-sm">

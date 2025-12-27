@@ -20,6 +20,7 @@ export function Header() {
               alt="Logo"
               width={50}
               height={50}
+              priority
               className="-ml-2.5 scale-150 rounded-lg"
             />
             <h1 className="hidden text-xl font-bold tracking-tight text-primary sm:block">
@@ -37,6 +38,7 @@ export function Header() {
                 alt="Logo"
                 width={30}
                 height={30}
+                priority
                 className="mx-1 rounded-lg"
               />
               <span className="text-md font-bold text-primary">{userName}</span>

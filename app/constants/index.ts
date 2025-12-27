@@ -1,6 +1,7 @@
+import { NavLink } from '@/lib/types/metrics';
 import { LayoutDashboard, Settings } from 'lucide-react';
 
-export const NAV_LINKS = [
+export const NAV_LINKS: readonly NavLink[] = [
   { href: '/metrics', label: 'Metrics', icon: LayoutDashboard },
   { href: '/settings', label: 'Settings', icon: Settings },
 ] as const;

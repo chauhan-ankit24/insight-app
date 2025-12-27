@@ -1,15 +1,10 @@
-'use client';
-
 import { formatCurrency, formatNumberCompact } from '@/lib/utils/formatters';
 import { ArrowUpRight, ArrowDownRight, Minus } from 'lucide-react';
 import { MicroTrendChart } from './MicroTrendChart';
-import { useRouter } from 'next/navigation';
 import { SummaryMetric } from '@/lib/data/resolvers';
+import Link from 'next/link';
 
 export function SummaryCards({ metrics }: { metrics: SummaryMetric[] }) {
-  const router = useRouter();
-  console.log('summary', metrics);
-
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
       {metrics?.map((metric) => {
@@ -35,9 +30,9 @@ export function SummaryCards({ metrics }: { metrics: SummaryMetric[] }) {
         }[metric.trend || 'neutral'];
 
         return (
-          <div
+          <Link
             key={metric.id}
-            onClick={() => router.push(`/metrics/${metric.id}?grain=daily&range=30`)}
+            href={`/metrics/${metric.id}?grain=daily&range=30`}
             className={`group relative flex cursor-pointer flex-col justify-between overflow-hidden rounded-3xl border p-5 shadow-sm transition-all hover:scale-[1.01] hover:shadow-md ${styles.bg} ${styles.border}`}
           >
             <div className="relative z-10 space-y-4">
@@ -77,7 +72,7 @@ export function SummaryCards({ metrics }: { metrics: SummaryMetric[] }) {
 
             {/* Decorative Glass Overlay */}
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent opacity-50" />
-          </div>
+          </Link>
         );
       })}
     </div>

@@ -1,5 +1,3 @@
-'use client';
-
 import { ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 
@@ -42,7 +40,7 @@ export default function InsightsSkeleton() {
       {/* 3. Charts Section Grid */}
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
         {/* Main Performance Trend Skeleton (2/3 width) */}
-        <div className="rounded-[32px] border border-white/20 bg-white/10 p-8 backdrop-blur-md lg:col-span-2 dark:bg-white/5">
+        <div className="rounded-[32px] border border-white/20 bg-white/10 p-8 backdrop-blur-md dark:bg-white/5 lg:col-span-2">
           <div className="mb-8 space-y-2">
             <div className="h-3 w-40 animate-pulse rounded-full bg-foreground/20" />
             <div className="h-2 w-24 animate-pulse rounded-full bg-foreground/5" />

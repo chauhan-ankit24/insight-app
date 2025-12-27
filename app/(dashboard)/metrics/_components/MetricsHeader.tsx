@@ -2,17 +2,16 @@
 
 import { Download, Search, TrendingUp, TrendingDown, LayoutGrid, Loader2, X } from 'lucide-react';
 import { ActionButton } from '@/app/components/ui/ActionButton';
-import { exportMetrics } from '@/lib/utils/exportMetrics';
+import { generateMetricsCSV } from '@/lib/utils/exportMetrics';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState, useTransition, useMemo } from 'react';
-import { Metric } from '@/lib/types/metrics';
+import { useEffect, useState, useTransition } from 'react';
 
-export function MetricsHeader({ metrics }: { metrics: Metric[] }) {
+export function MetricsHeader() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const [isPending, startTransition] = useTransition();
-
+  const [isExporting, startExportTransition] = useTransition();
   const [searchValue, setSearchValue] = useState(searchParams.get('q') || '');
   const [isTyping, setIsTyping] = useState(false);
 
@@ -62,25 +61,27 @@ export function MetricsHeader({ metrics }: { metrics: Metric[] }) {
 
   const currentFilter = searchParams.get('filter') || 'all';
 
-  const filteredMetrics = useMemo(() => {
-    const q = searchParams.get('q')?.toLowerCase() || '';
-    const filter = searchParams?.get('filter') || 'all';
+  const handleExport = () => {
+    startExportTransition(async () => {
+      try {
+        const csvContent = await generateMetricsCSV([]);
 
-    return metrics?.filter((m) => {
-      const matchesSearch =
-        m.name.toLowerCase().includes(q) || m.category?.toLowerCase().includes(q);
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
 
-      // Filter Logic
-      if (filter === 'top') return matchesSearch && m.changePercent > 0;
-      if (filter === 'under') return matchesSearch && m.changePercent < 0;
-      if (filter === 'critical') return matchesSearch && m.status === 'critical';
+        link.href = url;
+        link.download = `metrics_report_${new Date().toISOString().split('T')[0]}.csv`;
 
-      return matchesSearch;
+        document.body.appendChild(link);
+        link.click();
+
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      } catch (error) {
+        console.error('Export failed:', error);
+      }
     });
-  }, [metrics, searchParams]);
-
-  const exportMetricsHandler = () => {
-    exportMetrics(filteredMetrics);
   };
 
   return (
@@ -148,11 +149,16 @@ export function MetricsHeader({ metrics }: { metrics: Metric[] }) {
           </div>
 
           <ActionButton
-            onClick={exportMetricsHandler}
-            className="bg-primary/80 text-primary-foreground hover:bg-primary/90"
+            onClick={handleExport}
+            disabled={isExporting}
+            className="flex w-36 items-center justify-center bg-primary/70 text-primary-foreground hover:bg-primary/90 disabled:opacity-70"
           >
-            <Download className="h-4 w-4" />
-            Export
+            {isExporting ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Download className="h-4 w-4" />
+            )}
+            <span>{isExporting ? 'Exporting...' : 'Export'}</span>
           </ActionButton>
         </div>
       </div>

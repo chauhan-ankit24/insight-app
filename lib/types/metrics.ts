@@ -1,3 +1,5 @@
+import { LucideIcon } from 'lucide-react';
+
 export type ContributorSnapshot = {
   timestamp: string;
   [key: string]: string | number;
@@ -41,4 +43,10 @@ export interface MetricTrendResponse {
   grain: 'daily' | 'weekly' | 'monthly';
   range: number;
   data: MetricTrendPoint[];
+}
+
+export interface NavLink {
+  readonly href: string;
+  readonly label: string;
+  readonly icon: LucideIcon;
 }
