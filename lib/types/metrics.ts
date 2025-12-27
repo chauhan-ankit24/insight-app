@@ -1,8 +1,15 @@
+import { DATA_GRAINS, DATA_RANGES, METRIC_STATUS, METRIC_TRENDS } from '@/app/constants';
+import { THEMES } from '@/app/constants/routes';
 import { LucideIcon } from 'lucide-react';
 
 export type ContributorSnapshot = {
   timestamp: string;
   [key: string]: string | number;
+};
+
+export type Point = {
+  date: Date;
+  value: number;
 };
 
 export interface Metric {
@@ -13,24 +20,24 @@ export interface Metric {
   unit: string;
   type: 'CUSTOM' | 'SIMPLE';
   category: 'Marketing' | 'Finance' | 'Product' | 'Operations' | 'Sales';
-  status: 'healthy' | 'warning' | 'critical';
+  status: MetricStatus;
   changePercent: number;
   lastUpdated: string;
-  trend: 'up' | 'down' | 'neutral';
+  trend: Trend;
   sparklineData: number[];
   contributorKeys: string[];
   contributorsData: ContributorSnapshot[];
-  trendData: { date: Date; value: number }[];
+  trendData: Point[];
 }
 
 export interface MetricTrend {
   metricId: string;
-  data: { date: string; value: number }[];
+  data: Point[];
 }
 export interface MetricTrendPoint {
-  date: string; // ISO string for sorting/formatting
-  label: string; // e.g. "Jan", "Feb" or "Week 1"
-  [key: string]: string | number; // This allows dynamic keys like { date: '...', label: 'Jan', Wheat: 10, Barley: 5 }
+  date: string;
+  label: string;
+  [key: string]: string | number;
 }
 export interface MetricContributor {
   id: string;
@@ -40,8 +47,8 @@ export interface MetricContributor {
 
 export interface MetricTrendResponse {
   metricId: string;
-  grain: 'daily' | 'weekly' | 'monthly';
-  range: number;
+  grain: DataGrain;
+  range: DataRange;
   data: MetricTrendPoint[];
 }
 
@@ -50,3 +57,17 @@ export interface NavLink {
   readonly label: string;
   readonly icon: LucideIcon;
 }
+
+export type MetricFilter = 'all' | 'top' | 'under' | 'critical';
+
+export type Trend = 'up' | 'down' | 'neutral';
+
+export type MetricTrends = (typeof METRIC_TRENDS)[keyof typeof METRIC_TRENDS];
+
+export type MetricStatus = (typeof METRIC_STATUS)[keyof typeof METRIC_STATUS];
+
+export type DataGrain = (typeof DATA_GRAINS)[keyof typeof DATA_GRAINS];
+
+export type DataRange = (typeof DATA_RANGES)[keyof typeof DATA_RANGES];
+
+export type ThemeValue = (typeof THEMES)[keyof typeof THEMES];

@@ -4,6 +4,7 @@ import { unstable_cache } from 'next/cache';
 export type SummaryMetric = Metric & { summaryLabel?: string };
 export type TableMetric = Omit<Metric, 'trendData' | 'contributorsData'>;
 import { mockMetrics } from './mock-data';
+import { METRIC_FILTERS } from '@/app/constants';
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -173,7 +174,7 @@ export const getSummaryMetrics = unstable_cache(
 // Simulate fetching all metrics for the table view API
 export const getMetrics = (filters?: { query?: string; category?: string }) => {
   const query = filters?.query || '';
-  const category = filters?.category || 'all';
+  const category = filters?.category || METRIC_FILTERS.ALL;
 
   return unstable_cache(
     async () => {
@@ -188,11 +189,12 @@ export const getMetrics = (filters?: { query?: string; category?: string }) => {
         );
       }
 
-      if (category !== 'all') {
-        if (category === 'top') filtered = filtered.filter((m) => m.changePercent > 0);
-        else if (category === 'under') filtered = filtered.filter((m) => m.changePercent < 0);
-        else if (category === 'critical')
-          filtered = filtered.filter((m) => m.status === 'critical');
+      if (category !== METRIC_FILTERS.ALL) {
+        if (category === METRIC_FILTERS.TOP) filtered = filtered.filter((m) => m.changePercent > 0);
+        else if (category === METRIC_FILTERS.UNDER)
+          filtered = filtered.filter((m) => m.changePercent < 0);
+        else if (category === METRIC_FILTERS.CRITICAL)
+          filtered = filtered.filter((m) => m.status === METRIC_FILTERS.CRITICAL);
         else filtered = filtered.filter((m) => m.category === category);
       }
 

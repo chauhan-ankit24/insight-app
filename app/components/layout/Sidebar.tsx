@@ -3,9 +3,9 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useMemo, memo } from 'react';
-import { NAV_LINKS } from '@/app/constants';
 import { motion } from 'framer-motion';
 import { NavLink } from '@/lib/types/metrics';
+import { NAV_LINKS } from '@/app/constants/routes';
 
 const NavItem = memo(({ item, isActive }: { item: NavLink; isActive: boolean }) => {
   const Icon = item.icon;

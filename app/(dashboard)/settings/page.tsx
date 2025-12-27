@@ -58,9 +58,10 @@ export default function SettingsPage() {
               <Languages className="h-4 w-4 text-primary" />
               <h2 className="text-[11px] font-black uppercase tracking-[0.2em]">Region</h2>
             </div>
-            <select className="w-full cursor-pointer bg-transparent text-xs font-bold outline-none">
+            <select className="hover:bg-muted/50 border-border w-full cursor-pointer appearance-none rounded-lg border bg-background py-2 pl-9 pr-10 text-xs font-bold outline-none transition-all focus:border-primary/50 focus:ring-4 focus:ring-primary/5">
               <option value="en">English (US)</option>
               <option value="es">Spanish (ES)</option>
+              <option value="fr">French (FR)</option>
             </select>
           </section>
         </div>

@@ -1,5 +1,7 @@
 'use client';
 
+import { MetricStatus } from '@/lib/types/metrics';
+import { getStatusColor } from '@/lib/utils/style-utils';
 import { useMemo } from 'react';
 import { AreaChart, Area, ResponsiveContainer, ReferenceLine, YAxis } from 'recharts';
 
@@ -8,20 +10,9 @@ export function MicroTrendChart({
   status,
 }: {
   data: { value: number }[];
-  status: 'healthy' | 'warning' | 'critical';
+  status: MetricStatus;
 }) {
-  const brandColor = useMemo(() => {
-    switch (status) {
-      case 'healthy':
-        return 'hsl(var(--success))';
-      case 'warning':
-        return 'hsl(var(--warning))';
-      case 'critical':
-        return 'hsl(var(--destructive))';
-      default:
-        return 'hsl(var(--primary))';
-    }
-  }, [status]);
+  const brandColor = useMemo(() => getStatusColor(status), [status]);
 
   // 2. Calculate Average
   const avgValue = useMemo(() => {

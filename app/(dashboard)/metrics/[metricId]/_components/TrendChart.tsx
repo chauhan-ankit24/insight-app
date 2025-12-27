@@ -30,7 +30,6 @@ export function TrendChart({ data }: { data: TrendPoint[] }) {
     return { avg, isPositive };
   }, [data]);
 
-  // 1. Updated to use your new Semantic Variables
   const brandColor = stats.isPositive ? 'hsl(var(--success))' : 'hsl(var(--destructive))';
   const indigoColor = 'hsl(var(--primary))';
 

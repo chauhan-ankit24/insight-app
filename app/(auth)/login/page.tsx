@@ -13,7 +13,7 @@ export default function LoginPage() {
         <div className="flex flex-col items-center text-center">
           <div className="group relative">
             <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-primary to-violet-500 opacity-15 blur transition duration-1000 group-hover:opacity-50" />
-            <div className="relative flex items-center justify-center rounded-2xl p-2 shadow-2xl backdrop-blur-sm">
+            <div className="relative flex items-center justify-center rounded-2xl p-2 shadow-2xl backdrop-blur-lg">
               <Image
                 src="/logo.png"
                 alt="Logo"
