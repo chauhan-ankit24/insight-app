@@ -24,7 +24,6 @@ export interface Metric {
   changePercent: number;
   lastUpdated: string;
   trend: Trend;
-  sparklineData: number[];
   contributorKeys: string[];
   contributorsData: ContributorSnapshot[];
   trendData: Point[];

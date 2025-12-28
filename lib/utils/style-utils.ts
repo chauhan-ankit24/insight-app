@@ -33,16 +33,19 @@ export function getStatusStyles(status: MetricStatus = METRIC_STATUS.HEALTHY) {
       bg: 'bg-success',
       pill: 'bg-success/10 text-success border-success/20',
       text: 'Healthy',
+      ring: 'ring-success',
     },
     [METRIC_STATUS.WARNING]: {
       bg: 'bg-warning',
       pill: 'bg-warning/10 text-warning border-warning/20',
       text: 'Warning',
+      ring: 'ring-warning',
     },
     [METRIC_STATUS.CRITICAL]: {
       bg: 'bg-destructive',
       pill: 'bg-destructive/10 text-destructive border-destructive/20',
       text: 'Critical',
+      ring: 'ring-destructive',
     },
   };
 

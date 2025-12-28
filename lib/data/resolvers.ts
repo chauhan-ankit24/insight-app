@@ -2,7 +2,7 @@ import { MetricTrend, Metric } from '../types/metrics';
 import { unstable_cache } from 'next/cache';
 
 export type SummaryMetric = Metric & { summaryLabel?: string };
-export type TableMetric = Omit<Metric, 'trendData' | 'contributorsData'>;
+export type TableMetric = Omit<Metric, 'contributorsData'>;
 import { mockMetrics } from './mock-data';
 import { METRIC_FILTERS } from '@/app/constants';
 
@@ -15,20 +15,12 @@ export const getMetricById = (metricId: string) =>
       await delay(800);
       const metric = mockMetrics.find((m) => m.id === metricId);
 
-      if (!metric) throw new Error('Metric not found');
+      if (!metric) return null;
 
-      const {
-        trendData,
-        sparklineData,
-        contributorKeys,
-        contributorsData,
-        changePercent,
-        value,
-        ...lightMetric
-      } = metric;
+      const { trendData, contributorKeys, contributorsData, changePercent, value, ...lightMetric } =
+        metric;
 
       void trendData;
-      void sparklineData;
       void contributorKeys;
       void contributorsData;
       void changePercent;
@@ -198,8 +190,8 @@ export const getMetrics = (filters?: { query?: string; category?: string }) => {
         else filtered = filtered.filter((m) => m.category === category);
       }
 
-      return filtered.map(({ trendData, contributorsData, ...rest }) => {
-        void trendData;
+      return filtered.map(({ contributorsData, ...rest }) => {
+        // void trendData;
         void contributorsData;
         return rest;
       });

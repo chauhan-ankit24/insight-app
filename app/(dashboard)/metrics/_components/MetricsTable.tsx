@@ -9,6 +9,7 @@ import { METRIC_STATUS } from '@/app/constants';
 
 export function MetricTable({ metrics }: { metrics: TableMetric[] }) {
   const hrefBuilder = (id: string) => `${ROUTES.DASHBOARD.METRICS}/${id}?grain=daily&range=30`;
+  console.log(metrics);
 
   return (
     <div className="bg-card border-border/50 relative min-h-[400px] w-full overflow-hidden rounded-xl border shadow-sm">
@@ -28,7 +29,6 @@ export function MetricTable({ metrics }: { metrics: TableMetric[] }) {
             {metrics?.length > 0 ? (
               metrics.map((metric) => {
                 const url = hrefBuilder(metric.id);
-                const statusInfo = getStatusStyles(metric.status || METRIC_STATUS.HEALTHY);
                 return (
                   <tr
                     key={metric.id}
@@ -54,14 +54,16 @@ export function MetricTable({ metrics }: { metrics: TableMetric[] }) {
                         href={url}
                         className="flex h-full w-full items-center justify-center px-6 py-4"
                       >
-                        <div className="relative flex h-2 w-2">
-                          <div
-                            className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-20 ${statusInfo.bg}`}
-                          />
-                          <div
-                            className={`pulse-2 relative inline-flex h-2 w-2 rounded-full ${statusInfo.bg}`}
-                          />
-                        </div>
+                        <span
+                          className={`h-2.5 w-2.5 rounded-full ring-2 ring-offset-2 ring-offset-background ${
+                            metric.status === 'healthy'
+                              ? 'bg-[#22c55e] ring-[#22c55e]'
+                              : metric.status === 'warning'
+                                ? 'bg-[#f59e0b] ring-[#f59e0b]'
+                                : 'bg-[#ef4444] ring-[#ef4444]'
+                          }`}
+                          aria-hidden="true"
+                        />
                       </Link>
                     </td>
 
@@ -82,8 +84,8 @@ export function MetricTable({ metrics }: { metrics: TableMetric[] }) {
                       <Link href={url} className="block min-w-[120px] px-6 py-4">
                         <div className="h-8 w-full opacity-80 transition-opacity group-hover:opacity-100">
                           <MicroTrendChart
-                            data={(metric.sparklineData || []).map((val: number) => ({
-                              value: val,
+                            data={(metric.trendData || []).map((point) => ({
+                              value: point.value,
                             }))}
                             status={metric.status}
                           />

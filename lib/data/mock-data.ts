@@ -83,7 +83,6 @@ export const mockMetrics: Metric[] = [
     changePercent: 3.1,
     lastUpdated: new Date().toISOString(),
     trend: 'up',
-    sparklineData: [142, 144, 145, 146, 147, 148.5],
     contributorKeys: ['New Customers', 'Returning Customers'],
     contributorsData: generateDailyContributors(90, ['New Customers', 'Returning Customers'], 100),
     trendData: generateTrendData(90, 140, 'up'),
@@ -100,7 +99,6 @@ export const mockMetrics: Metric[] = [
     changePercent: -2.1,
     lastUpdated: new Date().toISOString(),
     trend: 'down',
-    sparklineData: [3.5, 3.45, 3.4, 3.3, 3.28, 3.24],
     contributorKeys: ['Organic', 'Paid Search', 'Email', 'Direct'],
     contributorsData: generateDailyContributors(
       90,
@@ -121,7 +119,6 @@ export const mockMetrics: Metric[] = [
     changePercent: 12.5,
     lastUpdated: new Date().toISOString(),
     trend: 'up',
-    sparklineData: [112000, 115000, 114500, 119000, 121000, 125430],
     contributorKeys: ['Enterprise', 'Pro', 'Basic', 'Consulting', 'Add-ons'],
     contributorsData: generateDailyContributors(
       90,
@@ -142,7 +139,6 @@ export const mockMetrics: Metric[] = [
     changePercent: -15.8,
     lastUpdated: new Date().toISOString(),
     trend: 'down',
-    sparklineData: [1.2, 1.4, 1.3, 1.8, 1.9, 2.1],
     contributorKeys: ['Voluntary', 'Delinquent', 'Technical', 'Product Gap'],
     contributorsData: generateDailyContributors(
       90,
@@ -163,7 +159,6 @@ export const mockMetrics: Metric[] = [
     changePercent: 8.2,
     lastUpdated: new Date().toISOString(),
     trend: 'up',
-    sparklineData: [7200, 7500, 7800, 8100, 8300, 8432],
     contributorKeys: ['Direct', 'Referral', 'Social', 'Affiliate'],
     contributorsData: generateDailyContributors(
       90,
@@ -184,7 +179,6 @@ export const mockMetrics: Metric[] = [
     changePercent: 5.4,
     lastUpdated: new Date().toISOString(),
     trend: 'up',
-    sparklineData: [38000, 39500, 40200, 41000, 41800, 42150],
     contributorKeys: ['Web', 'iOS', 'Android', 'Desktop'],
     contributorsData: generateDailyContributors(90, ['Web', 'iOS', 'Android', 'Desktop'], 15000),
     trendData: generateTrendData(90, 35000, 'up'),
@@ -201,7 +195,6 @@ export const mockMetrics: Metric[] = [
     changePercent: 4.2,
     lastUpdated: new Date().toISOString(),
     trend: 'neutral',
-    sparklineData: [72, 74, 73, 70, 69, 68],
     contributorKeys: ['Promoters', 'Passives', 'Detractors'],
     contributorsData: generateDailyContributors(90, ['Promoters', 'Passives', 'Detractors'], 1000),
     trendData: generateTrendData(90, 75, 'down'),
