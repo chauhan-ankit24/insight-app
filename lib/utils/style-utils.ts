@@ -22,6 +22,12 @@ export function getTrendStyles(trend: MetricTrends = METRIC_TRENDS.NEUTRAL) {
       text: 'text-warning',
       icon: Minus,
     },
+    [METRIC_TRENDS.VOLATILE]: {
+      bg: 'bg-orange-500/10',
+      border: 'border-orange-500',
+      text: 'text-orange-500',
+      icon: Minus,
+    },
   };
 
   return config[trend];
@@ -37,7 +43,7 @@ export function getStatusStyles(status: MetricStatus = METRIC_STATUS.HEALTHY) {
     },
     [METRIC_STATUS.WARNING]: {
       bg: 'bg-warning',
-      pill: 'bg-warning/10 text-warning border-warning/20',
+      pill: 'bg-warning text-warning-foreground border-warning',
       text: 'Warning',
       ring: 'ring-warning',
     },

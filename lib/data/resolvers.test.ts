@@ -6,6 +6,15 @@ vi.mock('next/cache', () => ({
   unstable_cache: <T extends (...args: unknown[]) => unknown>(fn: T) => fn,
 }));
 
+// Mock simulateRandomFailure to do nothing in tests
+vi.mock('./resolvers', async () => {
+  const actual = await vi.importActual('./resolvers');
+  return {
+    ...actual,
+    simulateRandomFailure: vi.fn(),
+  };
+});
+
 import {
   getMetricById,
   getMetricContributors,
@@ -27,8 +36,9 @@ describe('Metrics Resolve Functions', () => {
       const result = await getMetricById(metricId);
 
       expect(result).toBeDefined();
-      expect(result.id).toBe(metricId);
-      expect(result.name).toBeDefined();
+      expect(result).not.toBeNull();
+      expect(result!.id).toBe(metricId);
+      expect(result!.name).toBeDefined();
     });
 
     it('should throw error for invalid metric ID', async () => {

@@ -24,7 +24,7 @@ export default async function MetricsPage({ searchParams }: Props) {
   return (
     <div className="relative space-y-8">
       <Suspense fallback={<div>Loading...</div>}>
-        <MetricsHeader />
+        <MetricsHeader metrics={tableData} />
       </Suspense>
       <SummaryCards metrics={summaryData} />
       <MetricTable metrics={tableData} />

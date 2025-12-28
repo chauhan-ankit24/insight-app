@@ -22,8 +22,8 @@
     /* --- Feedback & Semantic Colors --- */
     --success: 142 70% 45%; /* Emerald Green */
     --success-foreground: 142 70% 95%;
-    --warning: 38 92% 50%; /* Amber Gold */
-    --warning-foreground: 38 92% 5%;
+    --warning: 25 95% 53%; /* Orange */
+    --warning-foreground: 25 95% 95%;
     --destructive: 346 84% 61%; /* Rose Red */
     --destructive-foreground: 346 84% 98%;
 

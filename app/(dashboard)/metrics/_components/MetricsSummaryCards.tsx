@@ -3,13 +3,14 @@ import { MicroTrendChart } from './MicroTrendChart';
 import { SummaryMetric } from '@/lib/data/resolvers';
 import Link from 'next/link';
 import { ROUTES } from '@/app/constants/routes';
-import { getTrendStyles } from '@/lib/utils/style-utils';
+import { getTrendStyles, getStatusStyles } from '@/lib/utils/style-utils';
 
 export function SummaryCards({ metrics }: { metrics: SummaryMetric[] }) {
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
       {metrics?.map((metric) => {
         const styles = getTrendStyles(metric.trend);
+        const statusStyles = getStatusStyles(metric.status);
         const Icon = styles.icon;
 
         return (
@@ -25,7 +26,7 @@ export function SummaryCards({ metrics }: { metrics: SummaryMetric[] }) {
                   {metric.name}
                 </span>
                 <div
-                  className={`flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-black ${styles.bg} ${styles.text} ${styles.border}`}
+                  className={`flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-black ${statusStyles.pill}`}
                 >
                   <Icon className="h-4 w-4" />
                   {Math.abs(metric.changePercent)}%
@@ -40,8 +41,10 @@ export function SummaryCards({ metrics }: { metrics: SummaryMetric[] }) {
                       ? formatCurrency(metric.value)
                       : formatNumberCompact(metric.value)}
                   </h3>
-                  <p className="text-muted-foreground/60 mt-1 text-[10px] font-bold uppercase tracking-tighter">
-                    Current Performance
+                  <p
+                    className={`${styles.text} mt-1 text-[10px] font-bold uppercase tracking-wider`}
+                  >
+                    {metric.summaryLabel}
                   </p>
                 </div>
                 <div className="mt-4 flex-1">

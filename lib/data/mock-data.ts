@@ -1,6 +1,13 @@
-import { Metric, ContributorSnapshot } from '../types/metrics';
+import {
+  METRIC_CATEGORIES,
+  METRIC_STATUS,
+  METRIC_TRENDS,
+  METRIC_TYPES,
+  METRIC_UNITS,
+} from '@/app/constants';
+import { Metric, ContributorSnapshot, Trend } from '../types/metrics';
 
-const generateTrendData = (days: number, startValue: number, trend: 'up' | 'down' | 'volatile') => {
+const generateTrendData = (days: number, startValue: number, trend: Trend) => {
   const data = [];
   const today = new Date();
   let currentValue = startValue;
@@ -12,9 +19,9 @@ const generateTrendData = (days: number, startValue: number, trend: 'up' | 'down
     // 1. INCREASE BIAS: General direction force
     // We increase this to 2-3% to ensure the line actually travels up or down
     let bias = 0;
-    if (trend === 'up') bias = currentValue * (Math.random() * 0.04);
-    if (trend === 'down') bias = -currentValue * (Math.random() * 0.03);
-    if (trend === 'volatile') bias = (Math.random() - 0.5) * (currentValue * 0.08);
+    if (trend === METRIC_TRENDS.UP) bias = currentValue * (Math.random() * 0.04);
+    if (trend === METRIC_TRENDS.DOWN) bias = -currentValue * (Math.random() * 0.03);
+    if (trend === METRIC_TRENDS.VOLATILE) bias = (Math.random() - 0.5) * (currentValue * 0.08);
 
     // 2. BIGGER NOISE: Daily "jitter"
     // Increased to 5% variance to prevent flat-looking segments
@@ -76,127 +83,127 @@ export const mockMetrics: Metric[] = [
     name: 'Avg. Ticket Size',
     description: 'Average order value generated per customer transaction.',
     value: 148.5,
-    unit: 'USD',
-    type: 'SIMPLE',
-    category: 'Finance',
-    status: 'healthy',
+    unit: METRIC_UNITS.USD,
+    type: METRIC_TYPES.SIMPLE,
+    category: METRIC_CATEGORIES.FINANCE,
+    status: METRIC_STATUS.HEALTHY,
     changePercent: 3.1,
     lastUpdated: new Date().toISOString(),
-    trend: 'up',
+    trend: METRIC_TRENDS.UP,
     contributorKeys: ['New Customers', 'Returning Customers'],
     contributorsData: generateDailyContributors(90, ['New Customers', 'Returning Customers'], 100),
-    trendData: generateTrendData(90, 140, 'up'),
+    trendData: generateTrendData(90, 140, METRIC_TRENDS.UP),
   },
   {
     id: 'conversion-rate',
     name: 'Conversion Rate',
     description: 'Percentage of unique visitors who completed a checkout.',
     value: 3.24,
-    unit: 'PERCENT',
-    type: 'SIMPLE',
-    category: 'Sales',
-    status: 'warning',
+    unit: METRIC_UNITS.PERCENT,
+    type: METRIC_TYPES.SIMPLE,
+    category: METRIC_CATEGORIES.SALES,
+    status: METRIC_STATUS.WARNING,
     changePercent: -2.1,
     lastUpdated: new Date().toISOString(),
-    trend: 'down',
+    trend: METRIC_TRENDS.DOWN,
     contributorKeys: ['Organic', 'Paid Search', 'Email', 'Direct'],
     contributorsData: generateDailyContributors(
       90,
       ['Organic', 'Paid Search', 'Email', 'Direct'],
       5
     ),
-    trendData: generateTrendData(90, 3.5, 'down'),
+    trendData: generateTrendData(90, 3.5, METRIC_TRENDS.DOWN),
   },
   {
     id: 'revenue',
     name: 'Total Revenue',
     description: 'Gross revenue generated across all subscription tiers and add-ons.',
     value: 125430,
-    unit: 'USD',
-    type: 'CUSTOM',
-    category: 'Finance',
-    status: 'healthy',
+    unit: METRIC_UNITS.USD,
+    type: METRIC_TYPES.CUSTOM,
+    category: METRIC_CATEGORIES.FINANCE,
+    status: METRIC_STATUS.HEALTHY,
     changePercent: 12.5,
     lastUpdated: new Date().toISOString(),
-    trend: 'up',
+    trend: METRIC_TRENDS.UP,
     contributorKeys: ['Enterprise', 'Pro', 'Basic', 'Consulting', 'Add-ons'],
     contributorsData: generateDailyContributors(
       90,
       ['Enterprise', 'Pro', 'Basic', 'Consulting', 'Add-ons'],
       50000
     ),
-    trendData: generateTrendData(90, 110000, 'up'),
+    trendData: generateTrendData(90, 110000, METRIC_TRENDS.UP),
   },
   {
     id: 'churn-rate',
     name: 'Customer Churn',
     description: 'Percentage of customers who cancelled their subscription.',
     value: 2.15,
-    unit: 'PERCENT',
-    type: 'SIMPLE',
-    category: 'Finance',
-    status: 'critical',
+    unit: METRIC_UNITS.PERCENT,
+    type: METRIC_TYPES.SIMPLE,
+    category: METRIC_CATEGORIES.FINANCE,
+    status: METRIC_STATUS.CRITICAL,
     changePercent: -15.8,
     lastUpdated: new Date().toISOString(),
-    trend: 'down',
+    trend: METRIC_TRENDS.DOWN,
     contributorKeys: ['Voluntary', 'Delinquent', 'Technical', 'Product Gap'],
     contributorsData: generateDailyContributors(
       90,
       ['Voluntary', 'Delinquent', 'Technical', 'Product Gap'],
       200
     ),
-    trendData: generateTrendData(90, 1.5, 'volatile'),
+    trendData: generateTrendData(90, 1.5, METRIC_TRENDS.DOWN),
   },
   {
     id: 'orders',
     name: 'Total Orders',
     description: 'Number of successful transactions processed in the current period.',
     value: 8432,
-    unit: 'NUMBER',
-    type: 'SIMPLE',
-    category: 'Sales',
-    status: 'healthy',
+    unit: METRIC_UNITS.NUMBER,
+    type: METRIC_TYPES.SIMPLE,
+    category: METRIC_CATEGORIES.SALES,
+    status: METRIC_STATUS.HEALTHY,
     changePercent: 8.2,
     lastUpdated: new Date().toISOString(),
-    trend: 'up',
+    trend: METRIC_TRENDS.UP,
     contributorKeys: ['Direct', 'Referral', 'Social', 'Affiliate'],
     contributorsData: generateDailyContributors(
       90,
       ['Direct', 'Referral', 'Social', 'Affiliate'],
       3000
     ),
-    trendData: generateTrendData(90, 7000, 'up'),
+    trendData: generateTrendData(90, 7000, METRIC_TRENDS.UP),
   },
   {
     id: 'active-users',
     name: 'Active Users',
     description: 'Daily active users (DAU) currently interacting with the platform.',
     value: 42150,
-    unit: 'NUMBER',
-    type: 'SIMPLE',
-    category: 'Product',
-    status: 'healthy',
+    unit: METRIC_UNITS.NUMBER,
+    type: METRIC_TYPES.SIMPLE,
+    category: METRIC_CATEGORIES.PRODUCT,
+    status: METRIC_STATUS.HEALTHY,
     changePercent: 5.4,
     lastUpdated: new Date().toISOString(),
-    trend: 'up',
+    trend: METRIC_TRENDS.UP,
     contributorKeys: ['Web', 'iOS', 'Android', 'Desktop'],
     contributorsData: generateDailyContributors(90, ['Web', 'iOS', 'Android', 'Desktop'], 15000),
-    trendData: generateTrendData(90, 35000, 'up'),
+    trendData: generateTrendData(90, 35000, METRIC_TRENDS.UP),
   },
   {
     id: 'nps',
     name: 'Net Promoter Score',
     description: 'Customer satisfaction based on survey responses.',
     value: 68,
-    unit: 'NUMBER',
-    type: 'SIMPLE',
-    category: 'Product',
-    status: 'warning',
+    unit: METRIC_UNITS.NUMBER,
+    type: METRIC_TYPES.SIMPLE,
+    category: METRIC_CATEGORIES.PRODUCT,
+    status: METRIC_STATUS.WARNING,
     changePercent: 4.2,
     lastUpdated: new Date().toISOString(),
-    trend: 'neutral',
+    trend: METRIC_TRENDS.NEUTRAL,
     contributorKeys: ['Promoters', 'Passives', 'Detractors'],
     contributorsData: generateDailyContributors(90, ['Promoters', 'Passives', 'Detractors'], 1000),
-    trendData: generateTrendData(90, 75, 'down'),
+    trendData: generateTrendData(90, 75, METRIC_TRENDS.DOWN),
   },
 ];

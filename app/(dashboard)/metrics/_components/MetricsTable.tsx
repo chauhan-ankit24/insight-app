@@ -4,12 +4,9 @@ import { MicroTrendChart } from './MicroTrendChart';
 import { SearchX } from 'lucide-react';
 import Link from 'next/link';
 import { ROUTES } from '@/app/constants/routes';
-import { getStatusStyles } from '@/lib/utils/style-utils';
-import { METRIC_STATUS } from '@/app/constants';
 
 export function MetricTable({ metrics }: { metrics: TableMetric[] }) {
   const hrefBuilder = (id: string) => `${ROUTES.DASHBOARD.METRICS}/${id}?grain=daily&range=30`;
-  console.log(metrics);
 
   return (
     <div className="bg-card border-border/50 relative min-h-[400px] w-full overflow-hidden rounded-xl border shadow-sm">
@@ -81,7 +78,7 @@ export function MetricTable({ metrics }: { metrics: TableMetric[] }) {
 
                     {/* Trend Cell */}
                     <td className="p-0">
-                      <Link href={url} className="block min-w-[120px] px-6 py-4">
+                      <Link href={url} className="block min-w-[280px] px-6 py-4">
                         <div className="h-8 w-full opacity-80 transition-opacity group-hover:opacity-100">
                           <MicroTrendChart
                             data={(metric.trendData || []).map((point) => ({

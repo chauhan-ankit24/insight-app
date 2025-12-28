@@ -1,4 +1,12 @@
-import { DATA_GRAINS, DATA_RANGES, METRIC_STATUS, METRIC_TRENDS } from '@/app/constants';
+import {
+  DATA_GRAINS,
+  DATA_RANGES,
+  METRIC_CATEGORIES,
+  METRIC_STATUS,
+  METRIC_TRENDS,
+  METRIC_TYPES,
+  METRIC_UNITS,
+} from '@/app/constants';
 import { THEMES } from '@/app/constants/routes';
 import { LucideIcon } from 'lucide-react';
 
@@ -17,9 +25,9 @@ export interface Metric {
   name: string;
   description: string;
   value: number;
-  unit: string;
-  type: 'CUSTOM' | 'SIMPLE';
-  category: 'Marketing' | 'Finance' | 'Product' | 'Operations' | 'Sales';
+  unit: MetricUnit;
+  type: MetricType;
+  category: MetricCategory;
   status: MetricStatus;
   changePercent: number;
   lastUpdated: string;
@@ -62,11 +70,17 @@ export interface NavLink {
 
 export type MetricFilter = 'all' | 'top' | 'under' | 'critical';
 
-export type Trend = 'up' | 'down' | 'neutral';
+export type Trend = 'up' | 'down' | 'neutral' | 'volatile';
 
 export type MetricTrends = (typeof METRIC_TRENDS)[keyof typeof METRIC_TRENDS];
 
 export type MetricStatus = (typeof METRIC_STATUS)[keyof typeof METRIC_STATUS];
+
+export type MetricUnit = (typeof METRIC_UNITS)[keyof typeof METRIC_UNITS];
+
+export type MetricType = (typeof METRIC_TYPES)[keyof typeof METRIC_TYPES];
+
+export type MetricCategory = (typeof METRIC_CATEGORIES)[keyof typeof METRIC_CATEGORIES];
 
 export type DataGrain = (typeof DATA_GRAINS)[keyof typeof DATA_GRAINS];
 

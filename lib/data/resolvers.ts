@@ -1,33 +1,34 @@
 import { MetricTrend, Metric } from '../types/metrics';
 import { unstable_cache } from 'next/cache';
+import { mockMetrics } from './mock-data';
+import { METRIC_FILTERS } from '@/app/constants';
+import { API_CONFIG } from './config';
 
 export type SummaryMetric = Metric & { summaryLabel?: string };
 export type TableMetric = Omit<Metric, 'contributorsData'>;
-import { mockMetrics } from './mock-data';
-import { METRIC_FILTERS } from '@/app/constants';
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-// Simulate random API failure for dev environment testing
 const simulateRandomFailure = () => {
-  if (Math.random() < 0.5) {
+  if (process.env.NODE_ENV === 'development') return;
+  if (Math.random() < API_CONFIG.FAILURE_RATE) {
     throw new Error('Simulated random API failure');
   }
 };
 
-// Simulate fetching a metric by its ID API
+// --- API Resolvers ---
+
 export const getMetricById = (metricId: string) =>
   unstable_cache(
     async () => {
       simulateRandomFailure();
-      await delay(800);
+      await delay(API_CONFIG.DELAYS.METRIC_DETAIL);
       const metric = mockMetrics.find((m) => m.id === metricId);
 
       if (!metric) return null;
 
       const { trendData, contributorKeys, contributorsData, changePercent, value, ...lightMetric } =
         metric;
-
       void trendData;
       void contributorKeys;
       void contributorsData;
@@ -36,27 +37,26 @@ export const getMetricById = (metricId: string) =>
 
       return lightMetric;
     },
-    ['metric-detail', metricId],
+    [API_CONFIG.CACHE_KEYS.DETAIL, metricId],
     {
-      revalidate: 3600,
-      tags: [`metric-${metricId}`, 'metrics'],
+      revalidate: API_CONFIG.CACHE_TTL.DETAIL,
+      tags: [`metric-${metricId}`, API_CONFIG.TAGS.METRICS],
     }
   )();
 
-// Simulate fetching metric contributors API
 export const getMetricContributors = (metricId: string, range: number = 7) =>
   unstable_cache(
     async () => {
       simulateRandomFailure();
-      await delay(900);
+      await delay(API_CONFIG.DELAYS.CONTRIBUTORS);
 
       const metric = mockMetrics.find((m) => m.id === metricId);
       if (!metric) return { data: [], keys: [] };
 
       const allContributors = metric.contributorsData;
-
       let displayContributors = [];
 
+      // Logic for slicing based on range
       if (range <= 7) {
         displayContributors = allContributors.slice(-7);
       } else if (range <= 30) {
@@ -65,36 +65,32 @@ export const getMetricContributors = (metricId: string, range: number = 7) =>
         displayContributors = allContributors.slice(-90).filter((_, i) => i % 7 === 0);
       }
 
-      const dynamicKeys =
-        displayContributors?.length > 0
-          ? Object.keys(displayContributors[0]).filter((key) => key !== 'timestamp')
-          : [];
+      const dynamicKeys = displayContributors?.[0]
+        ? Object.keys(displayContributors[0]).filter((key) => key !== 'timestamp')
+        : [];
 
-      return {
-        data: displayContributors,
-        keys: dynamicKeys,
-      };
+      return { data: displayContributors, keys: dynamicKeys };
     },
-    ['metric-contributors', metricId, range.toString()],
+    [API_CONFIG.CACHE_KEYS.CONTRIBUTORS, metricId, range.toString()],
     {
-      revalidate: 3600,
-      tags: [`metric-${metricId}`, 'contributors', 'metrics'],
+      revalidate: API_CONFIG.CACHE_TTL.DETAIL,
+      tags: [`metric-${metricId}`, API_CONFIG.TAGS.CONTRIBUTORS],
     }
   )();
 
-// Simulate fetching metric trend data API
 export const getMetricTrend = (metricId: string, grain: string = 'daily', range: number = 7) =>
   unstable_cache(
     async (): Promise<MetricTrend | null> => {
       simulateRandomFailure();
+      await delay(API_CONFIG.DELAYS.TREND);
+
       const metric = mockMetrics.find((m) => m.id === metricId);
       if (!metric) return null;
 
       const rawData = metric.trendData.slice(-range);
-
       const aggregatedData = rawData.reduce((acc: { date: string; value: number }[], curr) => {
-        let key: string;
         const d = new Date(curr.date);
+        let key: string;
 
         if (grain === 'weekly') {
           const startOfYear = new Date(d.getFullYear(), 0, 1);
@@ -109,72 +105,65 @@ export const getMetricTrend = (metricId: string, grain: string = 'daily', range:
         }
 
         const existing = acc.find((item) => item.date === key);
-        if (existing) {
-          existing.value += curr.value;
-        } else {
-          acc.push({ date: key, value: curr.value });
-        }
+        if (existing) existing.value += curr.value;
+        else acc.push({ date: key, value: curr.value });
+
         return acc;
       }, []);
 
-      return {
-        metricId,
-        data: aggregatedData,
-      };
+      return { metricId, data: aggregatedData };
     },
-    ['metric-trend', metricId, grain, range.toString()],
+    [API_CONFIG.CACHE_KEYS.TREND, metricId, grain, range.toString()],
     {
-      revalidate: 3600,
-      tags: [`metric-${metricId}`, 'trends'],
+      revalidate: API_CONFIG.CACHE_TTL.DETAIL,
+      tags: [`metric-${metricId}`, API_CONFIG.TAGS.TRENDS],
     }
   )();
 
-// Simulate fetching summary cards metric API
 export const getSummaryMetrics = unstable_cache(
   async (): Promise<SummaryMetric[]> => {
-    await delay(1000);
+    await delay(API_CONFIG.DELAYS.SUMMARY);
     simulateRandomFailure();
     const metrics = mockMetrics;
 
-    if (!metrics || metrics?.length === 0) return [];
+    if (!metrics?.length) return [];
 
-    const healthyMetric = [...metrics]
+    // Strategy: Grab best of each status
+    const healthy = [...metrics]
       .filter((m) => m.status === 'healthy')
       .sort((a, b) => b.changePercent - a.changePercent)[0];
-
-    const criticalMetric = [...metrics]
+    const critical = [...metrics]
       .filter((m) => m.status === 'critical')
       .sort((a, b) => a.changePercent - b.changePercent)[0];
-
-    const warningMetric = [...metrics]
+    const warning = [...metrics]
       .filter((m) => m.status === 'warning')
       .sort((a, b) => Math.abs(b.changePercent) - Math.abs(a.changePercent))[0];
 
-    const rawResults: SummaryMetric[] = [];
+    const results: SummaryMetric[] = [];
+    if (healthy) results.push({ ...healthy, summaryLabel: 'Best Performer' });
+    if (critical) results.push({ ...critical, summaryLabel: 'Action Required' });
+    if (warning) results.push({ ...warning, summaryLabel: 'Needs Attention' });
 
-    if (healthyMetric) rawResults.push({ ...healthyMetric, summaryLabel: 'Best Performer' });
-    if (criticalMetric) rawResults.push({ ...criticalMetric, summaryLabel: 'Action Required' });
-    if (warningMetric) rawResults.push({ ...warningMetric, summaryLabel: 'Needs Attention' });
-
-    if (rawResults?.length < 3) {
-      const usedIds = rawResults?.map((r) => r.id);
-      const remaining = metrics.filter((m) => !usedIds.includes(m.id));
-      rawResults.push(...remaining.slice(0, 3 - rawResults?.length));
+    // Fill to 3 if needed
+    if (results.length < 3) {
+      const ids = results.map((r) => r.id);
+      const extras = metrics.filter((m) => !ids.includes(m.id)).slice(0, 3 - results.length);
+      results.push(...extras);
     }
 
-    return rawResults.slice(0, 3)?.map(({ contributorsData, ...rest }) => {
+    return results.slice(0, 3).map(({ contributorsData, ...rest }) => {
       void contributorsData;
       return rest as SummaryMetric;
     });
   },
-  ['metric-detail'],
+
+  [API_CONFIG.CACHE_KEYS.SUMMARY],
   {
-    revalidate: 3600,
-    tags: ['summary-metrics', 'metrics'],
+    revalidate: API_CONFIG.CACHE_TTL.DETAIL,
+    tags: [API_CONFIG.TAGS.SUMMARY, API_CONFIG.TAGS.METRICS],
   }
 );
 
-// Simulate fetching all metrics for the table view API
 export const getMetrics = (filters?: { query?: string; category?: string }) => {
   const query = filters?.query || '';
   const category = filters?.category || METRIC_FILTERS.ALL;
@@ -182,7 +171,7 @@ export const getMetrics = (filters?: { query?: string; category?: string }) => {
   return unstable_cache(
     async () => {
       simulateRandomFailure();
-      await delay(800);
+      await delay(API_CONFIG.DELAYS.LIST);
 
       let filtered = [...mockMetrics];
 
@@ -203,15 +192,14 @@ export const getMetrics = (filters?: { query?: string; category?: string }) => {
       }
 
       return filtered.map(({ contributorsData, ...rest }) => {
-        // void trendData;
         void contributorsData;
         return rest;
       });
     },
-    ['metrics-list', query, category],
+    [API_CONFIG.CACHE_KEYS.LIST, query, category],
     {
-      revalidate: 600,
-      tags: ['metrics', `query-${query}`, `category-${category}`],
+      revalidate: API_CONFIG.CACHE_TTL.LIST,
+      tags: [API_CONFIG.TAGS.METRICS, `query-${query}`, `category-${category}`],
     }
   )();
 };

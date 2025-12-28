@@ -7,8 +7,9 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState, useTransition } from 'react';
 import { MetricFilter } from '@/lib/types/metrics';
 import { METRIC_FILTERS } from '@/app/constants';
+import { TableMetric } from '@/lib/data/resolvers';
 
-export function MetricsHeader() {
+export function MetricsHeader({ metrics }: { metrics: TableMetric[] }) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -66,7 +67,7 @@ export function MetricsHeader() {
   const handleExport = () => {
     startExportTransition(async () => {
       try {
-        const csvContent = await generateMetricsCSV([]);
+        const csvContent = await generateMetricsCSV(metrics);
 
         const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
