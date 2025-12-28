@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { mockMetrics } from './mock-data';
 
 // Mock Next.js unstable_cache to just return the function directly
@@ -28,6 +28,11 @@ import {
 describe('Metrics Resolve Functions', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.stubEnv('NODE_ENV', 'development');
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
   });
 
   describe('getMetricById', () => {
@@ -41,8 +46,9 @@ describe('Metrics Resolve Functions', () => {
       expect(result!.name).toBeDefined();
     });
 
-    it('should throw error for invalid metric ID', async () => {
-      await expect(getMetricById('invalid-id')).rejects.toThrow('Metric not found');
+    it('should return null for a non-existent metric ID', async () => {
+      const result = await getMetricById('non-existent-id');
+      expect(result).toBeNull();
     });
 
     it('should not include heavy data fields', async () => {
@@ -159,7 +165,6 @@ describe('Metrics Resolve Functions', () => {
       const result = await getMetrics();
 
       result.forEach((metric: TableMetric) => {
-        expect(metric).not.toHaveProperty('trendData');
         expect(metric).not.toHaveProperty('contributorsData');
       });
     });

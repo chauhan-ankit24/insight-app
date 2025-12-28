@@ -2,48 +2,13 @@
 
 A Next.js application for generating multi-page insights and data visualizations with comprehensive metrics analysis, trend charts, and export capabilities.
 
-## Features
-
-**Dashboard & Analytics**
-
-- Multi-page insights with summary cards (best performers, action items, alerts)
-- Interactive data visualizations with Recharts (trends, sparklines, contributor breakdowns)
-- Advanced filtering by category, query, and date ranges
-- CSV export functionality for external analysis
-
-**Performance & UX**
-
-- Server-side caching with `unstable_cache` and parallel data fetching
-- Suspense-based skeleton loaders to eliminate layout shifts
-- URL-driven state for shareable filtered views
-- Debounced search with `useTransition` for responsive UI
-- Error isolation with localized error boundaries
-- Dark/light mode with next-themes
-
-**Data Handling**
-
-- Mock data resolvers simulating API calls for metrics, trends, and contributors
-- Dynamic aggregation (daily, weekly, monthly)
-- Optimized caching with unique keys per filter combination
-
-**Code Quality**
-
-- Full TypeScript coverage with strict type safety
-- ESLint, Prettier, Vitest for testing
-- Husky pre-commit hooks with lint-staged
-- Commitlint for conventional commit standards
-- GitHub Actions CI/CD (build, test, lint on develop branch)
-
-## Tech Stack
-
-**Core**: Next.js 16 (App Router), React 19, TypeScript  
-**Styling**: Tailwind CSS, Framer Motion  
-**Charts**: Recharts, Lucide React  
-**Tools**: ESLint, Prettier, Vitest, Husky, GitHub Actions
-
 ## Getting Started
 
 ```bash
+# Clone the repository
+git clone https://github.com/chauhan-ankit24/insight-app.git
+cd insight-app
+
 # Install dependencies
 npm install
 
@@ -55,100 +20,157 @@ npm run build
 
 # Run tests
 npm run test
+
+# ESLint linting
+npm run lint
 ```
 
 Open [http://localhost:3000](http://localhost:3000)
 
-## Scripts
+## ⚠️ Development Notice: Error Testing
 
-- `npm run dev` - Development server
-- `npm run build` - Production build
-- `npm run start` - Production server
-- `npm run lint` - ESLint linting
-- `npm run test` - Run Vitest tests
+This project currently includes **intentional API failure points** to test resilience, Error Boundaries, `error.tsx` and the `not-found.tsx` logic.
 
-## Project Structure
+## Tech Stack
 
-```
-app/          # Next.js pages and layouts
-lib/          # Utils, data resolvers, types
-components/   # Reusable UI components
-public/       # Static assets
-constants/    # App constants
-```
+| Category                  | Technology                  | Version  |
+| ------------------------- | --------------------------- | -------- |
+| **Core Technologies**     | Next.js (App Router)        | 16.1.1   |
+|                           | React                       | 19.2.3   |
+|                           | TypeScript                  | 5        |
+| **Styling & Animation**   | Tailwind CSS                | 3.4.0    |
+|                           | Framer Motion               | 12.23.26 |
+|                           | next-themes                 | 0.4.6    |
+| **Charts & Icons**        | Recharts                    | 3.6.0    |
+|                           | Lucide React                | 0.562.0  |
+| **Development Tools**     | ESLint                      | 9        |
+|                           | Prettier                    | 3.7.4    |
+|                           | Vitest                      | 4.0.16   |
+|                           | Husky                       | 9.1.7    |
+|                           | lint-staged                 | 16.2.7   |
+|                           | Commitlint                  | 20.2.0   |
+|                           | GitHub Actions              | -        |
+| **Build & Configuration** | PostCSS                     | 8.5.0    |
+|                           | Autoprefixer                | 10.4.20  |
+|                           | Vite (@vitejs/plugin-react) | 5.1.2    |
 
-## Key Optimizations
+## Features
 
-- **Server Caching**: `unstable_cache` with dynamic keys for memoization
-- **Parallel Fetching**: `Promise.all` eliminates request waterfalls
-- **Bundle Optimization**: Data-heavy components stay server-side
-- **Island Architecture**: Selective `"use client"` for minimal JS
-- **Image Prefetching**: `next/image` with priority loading
-- **Memoized Processing**: `useMemo` for heavy chart computations
+## User Experience & Analytics
 
-## Folder strucutre
+- **Executive Insights**: High-level summary cards highlighting top performers, action items, and critical alerts.
+- **Interactive Visuals**: Rich data storytelling using Recharts for deep-dive trends and contributor breakdowns.
+- **Precision Filtering**: Advanced search by category and date range, synchronized with the **URL-state** for instant sharing.
+- **Data Portability**: Integrated CSV export functionality for offline reporting and external analysis.
+- **Seamless UI**: Adaptive Dark/Light modes with `next-themes` and responsive layouts for all devices.
+
+## Performance & Core Optimizations
+
+- **Parallel Fetching**: Waterfall elimination via `Promise.all` orchestration.
+- **Server Caching**: Granular `unstable_cache` with parameter-unique keys.
+- **Island Architecture**: Selective `"use client"` boundaries for minimal JS payload.
+- **Zero-CLS Loading**: Suspense-integrated **Skeleton Loaders** for layout stability.
+- **URL-Sync State**: Persistent filter/search state via native URL query parameters.
+- **Fluid Transitions**: Debounced search powered by `useTransition` for UI responsiveness.
+- **Fault Isolation**: Localized **Error Boundaries** for graceful failure handling.
+- **Memoized Processing**: `useMemo` optimization for complex SVG chart computations.
+- **Direct Utility Styling**: Configuration-free Tailwind arbitrary values for reliable rendering.
+- **Bundle Auditing**: Automated CI-integrated monitoring via `@next/bundle-analyzer`.
+- **Tag-Based Invalidation**: Targeted cache clearing via Next.js on-demand revalidation.
+
+## Data Intelligence & Resilience
+
+- **Failure Injection**: Mock APIs with $500-1000$ms latency and $10\%$ failure rates for stress-testing.
+- **Time-Grain Logic**: Dynamic grouping (Daily/Weekly/Monthly) with intelligent data sampling.
+- **URL-State Search**: Search and multi-filter logic synced directly with browser query params.
+- **Granular Caching**: Parameter-unique `unstable_cache` keys with tag-based invalidation.
+- **Synthetic Realism**: Data engine mimicking real-world volatility, biases, and business spikes.
+
+## Code Quality & Standards
+
+- **Type Safety**: 100% TypeScript coverage with strict mode enabled.
+- **Architectural Pattern**: Hybrid RSC (React Server Components) architecture for optimal performance.
+- **Testing Suite**:
+  - **Unit**: Vitest for utility logic and data resolvers.
+- **Automation**:
+  - **Husky**: Pre-commit hooks for linting and type-checking via `lint-staged`.
+  - **Commitlint**: Enforcement of [Conventional Commits](https://www.conventionalcommits.org/).
+  - **CI/CD**: GitHub Actions for automated build, test, and linting on every PR.
+- **Performance**: Automated bundle analysis and image optimization via Next.js `next/image`.
+
+## Labeled Directory Tree
+
+#### App Directory
 
 ```
 └── 📁app
     └── 📁(auth)
         └── 📁login
-            ├── LoginForm.tsx
-            ├── page.tsx
+            ├── 🟢 [Client] LoginForm.tsx
+            ├── 🔴 [Server] page.tsx
     └── 📁(dashboard)
         └── 📁metrics
             └── 📁_components
-                ├── MetricsHeader.tsx
-                ├── MetricsSkeleton.tsx
-                ├── MetricsSummaryCards.tsx
-                ├── MetricsTable.tsx
-                ├── MicroTrendChart.tsx
+                ├── 🟢 [Client] MetricsHeader.tsx
+                ├── 🟢 [Client] MetricsSkeleton.tsx
+                ├── 🔴 [Server] MetricsSummaryCards.tsx
+                ├── 🔴 [Server] MetricsTable.tsx
+                ├── 🟢 [Client] MicroTrendChart.tsx
             └── 📁[metricId]
                 └── 📁_components
-                    ├── ContributorsChart.tsx
-                    ├── InsightControls.tsx
-                    ├── InsightsSketon.tsx
-                    ├── TrendChart.tsx
-                ├── loading.tsx
-                ├── page.tsx
-            ├── error.tsx
-            ├── loading.tsx
-            ├── page.tsx
+                    ├── 🟢 [Client] ContributorsChart.tsx
+                    ├── 🟢 [Client] InsightControls.tsx
+                    ├── 🟢 [Client] InsightsSketon.tsx
+                    ├── 🟢 [Client] TrendChart.tsx
+                ├── 🟢 [Client] loading.tsx
+                ├── 🔴 [Server] page.tsx
+            ├── 🟢 [Client] error.tsx
+            ├── 🟢 [Client] loading.tsx
+            ├── 🔴 [Server] page.tsx
         └── 📁settings
-            ├── page.tsx
-        ├── layout.tsx
+            ├── 🔴 [Server] page.tsx
+        ├── 🔴 [Server] layout.tsx
     └── 📁components
         └── 📁layout
-            ├── Header.tsx
-            ├── Sidebar.tsx
+            ├── 🟢 [Client] Header.tsx
+            ├── 🟢 [Client] Sidebar.tsx
         └── 📁ui
-            ├── ActionButton.tsx
-        ├── ThemeToggle.tsx
+            ├── 🟢 [Client] ActionButton.tsx
+        ├── 🟢 [Client] ThemeToggle.tsx
     └── 📁constants
-        ├── index.ts
+        ├── [Utility] index.ts
+        ├── [Utility] routes.ts
+        ├── [Utility] seo.ts
     └── 📁contexts
-        ├── AuthContext.tsx
+        ├── 🟢 [Client] AuthContext.tsx
     └── 📁providers
-        ├── providers.tsx
-    ├── error.tsx
-    ├── favicon.ico
-    ├── globals.css
-    ├── layout.tsx
-    ├── middleware.ts
-    └── page.tsx
+        ├── 🟢 [Client] providers.tsx
+    ├── 🔴 [Server] error.tsx
+    ├── [Asset] favicon.ico
+    ├── [Styles] globals.css
+    ├── 🔴 [Server] layout.tsx
+    ├── 🔴 [Server] middleware.ts
+    ├── 🔴 [Server] not-found.tsx
+    ├── 🔴 [Server] page.tsx
+    ├── 🔴 [Server] robots.ts
+    └── 🔴 [Server] sitemap.ts
 ```
 
-## Data and Test Files
+#### Lib Directory
 
 ```
 └── 📁lib
     └── 📁data
-        ├── mock-data.ts
-        ├── resolvers.test.ts
-        ├── resolvers.ts
+        ├── [Utility] config.ts
+        ├── [Utility] mock-data.ts
+        ├── [Utility] resolvers.test.ts
+        ├── 🔴 [Server] resolvers.ts
     └── 📁types
-        ├── metrics.ts
+        ├── [Utility] metrics.ts
     └── 📁utils
-        ├── exportMetrics.ts
-        ├── formatters.ts
-        └── utils.ts
+        ├── 🔴 [Server] exportMetrics.ts
+        ├── [Utility] formatters.ts
+        ├── [Utility] metrics-utils.ts
+        ├── [Utility] style-utils.ts
+        └── [Utility] utils.ts
 ```

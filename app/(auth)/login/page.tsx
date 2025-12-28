@@ -20,7 +20,7 @@ export default function LoginPage() {
                 width={180}
                 height={180}
                 priority
-                className="rounded-lg object-contain"
+                className="w-auto rounded-lg object-contain"
               />
             </div>
           </div>

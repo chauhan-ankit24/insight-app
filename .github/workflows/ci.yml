@@ -73,6 +73,34 @@ jobs:
       - name: Run Tests
         run: npm run test
 
+  # STEP 3.5: Bundle Analysis (New Job)
+  bundle-analysis:
+    runs-on: ubuntu-latest
+    needs: [unit-tests]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run Next.js Bundle Analysis
+        run: npm run analyze
+        env:
+          ANALYZE: true
+
+      - name: Upload Analysis Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: bundle-analysis-report
+          path: .next/analyze/
+
   # STEP 4: Deployment (Runs only if ALL previous jobs pass)
   deploy:
     needs: [lint-and-format, security-audit, unit-tests]

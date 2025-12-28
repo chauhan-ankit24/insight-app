@@ -45,8 +45,15 @@ export function ContributorsChart({ data, keys }: ContributorsChartProps) {
   }
 
   return (
-    <div className="h-[350px] w-full">
-      <ResponsiveContainer width="100%" height="100%">
+    <div className="h-[350px] min-h-0 w-full min-w-0 flex-1">
+      <ResponsiveContainer
+        width="100%"
+        height="100%"
+        debounce={50}
+        minWidth={0}
+        minHeight={0}
+        aspect={undefined}
+      >
         <BarChart data={data} margin={{ top: 20, right: 10, left: 10, bottom: 0 }}>
           <defs>
             {keys.map((key, index) => {

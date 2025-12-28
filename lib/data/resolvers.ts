@@ -9,7 +9,7 @@ export type TableMetric = Omit<Metric, 'contributorsData'>;
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-const simulateRandomFailure = () => {
+export const simulateRandomFailure = () => {
   if (process.env.NODE_ENV === 'development') return;
   if (Math.random() < API_CONFIG.FAILURE_RATE) {
     throw new Error('Simulated random API failure');

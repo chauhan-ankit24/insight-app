@@ -9,10 +9,12 @@ import { ROUTES } from '@/app/constants/routes';
 import { getStatusStyles } from '@/lib/utils/style-utils';
 import { Metadata } from 'next';
 
-type Props = { params: { metricId: string } };
+type Props = { params: Promise<{ metricId: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const metric = await getMetricById(params.metricId);
+  const { metricId } = await params;
+
+  const metric = await getMetricById(metricId);
 
   if (!metric) {
     return { title: 'Metric Not Found', robots: { index: false } };

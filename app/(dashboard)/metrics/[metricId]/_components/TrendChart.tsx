@@ -56,8 +56,15 @@ export function TrendChart({ data }: { data: TrendPoint[] }) {
   }
 
   return (
-    <div className="h-[350px] w-full">
-      <ResponsiveContainer width="100%" height="100%">
+    <div className="h-[350px] min-h-0 w-full min-w-0 flex-1">
+      <ResponsiveContainer
+        width="100%"
+        height="100%"
+        debounce={50}
+        minWidth={0}
+        minHeight={0}
+        aspect={undefined}
+      >
         <AreaChart data={chartData} margin={{ top: 20, right: 80, left: 0, bottom: 0 }}>
           <defs>
             <linearGradient id="dynamicGradient" x1="0" y1="0" x2="0" y2="1">

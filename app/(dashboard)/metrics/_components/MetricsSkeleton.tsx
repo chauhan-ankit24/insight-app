@@ -4,7 +4,7 @@ export function MetricsSkeleton() {
   return (
     <div className="animate-in fade-in relative space-y-8 !bg-transparent duration-500">
       {/* 1. Header Skeleton - Consistent with Dashboard Title Styling */}
-      <MetricsHeader />
+      <MetricsHeader metrics={[]} />
 
       {/* 2. Summary Cards - Unified with exactly 32px rounding and success/indigo tints */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
