@@ -8,10 +8,18 @@ import { METRIC_FILTERS } from '@/app/constants';
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
+// Simulate random API failure for dev environment testing
+const simulateRandomFailure = () => {
+  if (Math.random() < 0.5) {
+    throw new Error('Simulated random API failure');
+  }
+};
+
 // Simulate fetching a metric by its ID API
 export const getMetricById = (metricId: string) =>
   unstable_cache(
     async () => {
+      simulateRandomFailure();
       await delay(800);
       const metric = mockMetrics.find((m) => m.id === metricId);
 
@@ -39,6 +47,7 @@ export const getMetricById = (metricId: string) =>
 export const getMetricContributors = (metricId: string, range: number = 7) =>
   unstable_cache(
     async () => {
+      simulateRandomFailure();
       await delay(900);
 
       const metric = mockMetrics.find((m) => m.id === metricId);
@@ -77,6 +86,7 @@ export const getMetricContributors = (metricId: string, range: number = 7) =>
 export const getMetricTrend = (metricId: string, grain: string = 'daily', range: number = 7) =>
   unstable_cache(
     async (): Promise<MetricTrend | null> => {
+      simulateRandomFailure();
       const metric = mockMetrics.find((m) => m.id === metricId);
       if (!metric) return null;
 
@@ -123,6 +133,7 @@ export const getMetricTrend = (metricId: string, grain: string = 'daily', range:
 export const getSummaryMetrics = unstable_cache(
   async (): Promise<SummaryMetric[]> => {
     await delay(1000);
+    simulateRandomFailure();
     const metrics = mockMetrics;
 
     if (!metrics || metrics?.length === 0) return [];
@@ -170,6 +181,7 @@ export const getMetrics = (filters?: { query?: string; category?: string }) => {
 
   return unstable_cache(
     async () => {
+      simulateRandomFailure();
       await delay(800);
 
       let filtered = [...mockMetrics];
