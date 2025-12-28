@@ -95,8 +95,11 @@ This project currently includes **intentional API failure points** to test resil
 - **Automation**:
   - **Husky**: Pre-commit hooks for linting and type-checking via `lint-staged`.
   - **Commitlint**: Enforcement of [Conventional Commits](https://www.conventionalcommits.org/).
-  - **CI/CD**: GitHub Actions for automated build, test, and linting on every PR.
 - **Performance**: Automated bundle analysis and image optimization via Next.js `next/image`.
+
+## **CI/CD**: GitHub Actions for automated build, test, and linting on every PR.
+<img width="1009" height="348" alt="image" src="https://github.com/user-attachments/assets/111580e8-007f-4b4a-8f0c-a1fc965c1b07" />
+
 
 ## Labeled Directory Tree
 
