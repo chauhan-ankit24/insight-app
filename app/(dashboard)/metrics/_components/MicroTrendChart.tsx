@@ -21,15 +21,16 @@ export function MicroTrendChart({
   }, [data]);
 
   return (
-    <div className="h-10 min-h-0 w-full min-w-0 flex-1">
-      <ResponsiveContainer
-        width="100%"
-        height="100%"
-        debounce={50}
-        minWidth={0}
-        minHeight={0}
-        aspect={undefined}
-      >
+    <div
+      style={{
+        height: '40px',
+        width: '100%',
+        contain: 'strict',
+        overflow: 'hidden',
+        position: 'relative',
+      }}
+    >
+      <ResponsiveContainer width="100%" height="100%" debounce={200}>
         <AreaChart data={data} margin={{ top: 2, bottom: 2, left: 0, right: 0 }}>
           <defs>
             <linearGradient id={`micro-grad-${status}`} x1="0" y1="0" x2="0" y2="1">
@@ -58,8 +59,7 @@ export function MicroTrendChart({
             strokeWidth={2}
             fill={`url(#micro-grad-${status})`}
             dot={false}
-            isAnimationActive={true}
-            animationDuration={1500}
+            isAnimationActive={false}
           />
         </AreaChart>
       </ResponsiveContainer>

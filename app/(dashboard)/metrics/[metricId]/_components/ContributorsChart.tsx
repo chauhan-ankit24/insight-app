@@ -45,15 +45,16 @@ export function ContributorsChart({ data, keys }: ContributorsChartProps) {
   }
 
   return (
-    <div className="h-[350px] min-h-0 w-full min-w-0 flex-1">
-      <ResponsiveContainer
-        width="100%"
-        height="100%"
-        debounce={50}
-        minWidth={0}
-        minHeight={0}
-        aspect={undefined}
-      >
+    <div
+      style={{
+        height: '350px',
+        width: '100%',
+        contain: 'strict',
+        overflow: 'hidden',
+        position: 'relative',
+      }}
+    >
+      <ResponsiveContainer width="100%" height="100%" debounce={200}>
         <BarChart data={data} margin={{ top: 20, right: 10, left: 10, bottom: 0 }}>
           <defs>
             {keys.map((key, index) => {
@@ -175,9 +176,10 @@ export function ContributorsChart({ data, keys }: ContributorsChartProps) {
               stackId="a"
               fill={`url(#grad-${index})`}
               barSize={20}
+              isAnimationActive={false}
               // Only top segment gets rounded corners
               radius={index === keys.length - 1 ? [4, 4, 0, 0] : [0, 0, 0, 0]}
-              className="transition-all duration-500"
+              // className="transition-all duration-500"
               opacity={activeKey === null || activeKey === key ? 1 : 0.15}
             />
           ))}

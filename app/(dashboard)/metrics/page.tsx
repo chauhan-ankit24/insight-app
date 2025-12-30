@@ -4,8 +4,6 @@ import { SummaryCards } from './_components/MetricsSummaryCards';
 import { MetricsHeader } from './_components/MetricsHeader';
 import { Suspense } from 'react';
 
-export const dynamic = 'force-dynamic';
-
 type Props = {
   searchParams: Promise<{ q?: string; filter?: string }>;
 };

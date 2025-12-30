@@ -3,7 +3,13 @@ import withBundleAnalyzer from '@next/bundle-analyzer';
 
 const nextConfig: NextConfig = {
   experimental: {
-    // cacheComponents: true,
+    optimizeCss: true,
+    optimizePackageImports: ['recharts', 'lucide-react'],
+  },
+  cacheComponents: true,
+  compress: true,
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
   },
 };
 

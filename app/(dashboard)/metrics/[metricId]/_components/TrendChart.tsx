@@ -56,15 +56,16 @@ export function TrendChart({ data }: { data: TrendPoint[] }) {
   }
 
   return (
-    <div className="h-[350px] min-h-0 w-full min-w-0 flex-1">
-      <ResponsiveContainer
-        width="100%"
-        height="100%"
-        debounce={50}
-        minWidth={0}
-        minHeight={0}
-        aspect={undefined}
-      >
+    <div
+      style={{
+        height: '350px',
+        width: '100%',
+        contain: 'strict',
+        overflow: 'hidden',
+        position: 'relative',
+      }}
+    >
+      <ResponsiveContainer width="100%" height="100%" debounce={200}>
         <AreaChart data={chartData} margin={{ top: 20, right: 80, left: 0, bottom: 0 }}>
           <defs>
             <linearGradient id="dynamicGradient" x1="0" y1="0" x2="0" y2="1">
@@ -160,7 +161,8 @@ export function TrendChart({ data }: { data: TrendPoint[] }) {
             stroke={brandColor}
             strokeWidth={4}
             fill="url(#dynamicGradient)"
-            animationDuration={2000}
+            isAnimationActive={false}
+            // animationDuration={2000}
             dot={isHighDensity ? false : { r: 4, fill: brandColor, strokeWidth: 0 }}
             activeDot={{
               r: 6,

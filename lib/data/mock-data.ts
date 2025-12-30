@@ -112,7 +112,7 @@ export const mockMetrics: Metric[] = [
       ['Organic', 'Paid Search', 'Email', 'Direct'],
       5
     ),
-    trendData: generateTrendData(90, 3.5, METRIC_TRENDS.DOWN),
+    trendData: generateTrendData(90, 3500, METRIC_TRENDS.DOWN),
   },
   {
     id: 'revenue',
@@ -152,7 +152,7 @@ export const mockMetrics: Metric[] = [
       ['Voluntary', 'Delinquent', 'Technical', 'Product Gap'],
       200
     ),
-    trendData: generateTrendData(90, 1.5, METRIC_TRENDS.DOWN),
+    trendData: generateTrendData(90, 158900, METRIC_TRENDS.DOWN),
   },
   {
     id: 'orders',
@@ -172,7 +172,7 @@ export const mockMetrics: Metric[] = [
       ['Direct', 'Referral', 'Social', 'Affiliate'],
       3000
     ),
-    trendData: generateTrendData(90, 7000, METRIC_TRENDS.UP),
+    trendData: generateTrendData(90, 70080, METRIC_TRENDS.UP),
   },
   {
     id: 'active-users',
@@ -204,6 +204,6 @@ export const mockMetrics: Metric[] = [
     trend: METRIC_TRENDS.NEUTRAL,
     contributorKeys: ['Promoters', 'Passives', 'Detractors'],
     contributorsData: generateDailyContributors(90, ['Promoters', 'Passives', 'Detractors'], 1000),
-    trendData: generateTrendData(90, 75, METRIC_TRENDS.DOWN),
+    trendData: generateTrendData(90, 7502234, METRIC_TRENDS.DOWN),
   },
 ];
