@@ -28,6 +28,7 @@ export function SummaryCards({ metrics }: { metrics: SummaryMetric[] }) {
             key={metric.id}
             href={`${ROUTES.DASHBOARD.METRICS}/${metric.id}?grain=daily&range=30`}
             className={`group relative flex cursor-pointer flex-col justify-between overflow-hidden rounded-3xl border p-5 shadow-sm transition-all hover:scale-[1.01] hover:shadow-md ${styles.bg} ${styles.border}`}
+            aria-label={`View ${metric.name} summary details`}
           >
             <div className="relative z-10 space-y-4">
               {/* Header: Label and Percentage Pill */}

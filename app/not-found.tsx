@@ -14,7 +14,7 @@ export default function NotFound() {
       <p className="text-muted-foreground mt-2 max-w-[350px] text-sm">URL is incorrect.</p>
 
       <div className="mt-8">
-        <Link href={ROUTES.DASHBOARD.METRICS}>
+        <Link href={ROUTES.DASHBOARD.METRICS} aria-label="Go back to all metrics">
           <ActionButton className="bg-primary text-primary-foreground">
             <MoveLeft className="mr-2 h-4 w-4" />
             Back to All Metrics

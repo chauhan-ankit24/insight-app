@@ -33,7 +33,11 @@ export function MetricTable({ metrics }: { metrics: TableMetric[] }) {
                   >
                     {/* Metric Details Cell */}
                     <td className="p-0">
-                      <Link href={url} className="block px-6 py-4 outline-none">
+                      <Link
+                        href={url}
+                        className="block px-6 py-4 outline-none"
+                        aria-label={`View ${metric.name} details`}
+                      >
                         <div className="flex flex-col">
                           <span className="font-semibold text-foreground transition-colors group-hover:text-primary">
                             {metric.name}
@@ -50,6 +54,7 @@ export function MetricTable({ metrics }: { metrics: TableMetric[] }) {
                       <Link
                         href={url}
                         className="flex h-full w-full items-center justify-center px-6 py-4"
+                        aria-label={`View ${metric.name} status details`}
                       >
                         <span
                           className={`h-2.5 w-2.5 rounded-full ring-2 ring-offset-2 ring-offset-background ${
@@ -69,6 +74,7 @@ export function MetricTable({ metrics }: { metrics: TableMetric[] }) {
                       <Link
                         href={url}
                         className="block px-6 py-4 font-mono text-[13px] font-bold tracking-tight text-foreground"
+                        aria-label={`View ${metric.name} current value`}
                       >
                         {metric.unit === 'USD'
                           ? formatCurrency(metric.value)
@@ -78,7 +84,11 @@ export function MetricTable({ metrics }: { metrics: TableMetric[] }) {
 
                     {/* Trend Cell */}
                     <td className="p-0">
-                      <Link href={url} className="block min-w-[280px] px-6 py-4">
+                      <Link
+                        href={url}
+                        className="block min-w-[280px] px-6 py-4"
+                        aria-label={`View ${metric.name} trend chart`}
+                      >
                         <div className="h-8 w-full opacity-80 transition-opacity group-hover:opacity-100">
                           <MicroTrendChart
                             data={(metric.trendData || []).map((point) => ({
@@ -92,7 +102,11 @@ export function MetricTable({ metrics }: { metrics: TableMetric[] }) {
 
                     {/* Change Cell */}
                     <td className="p-0 text-right">
-                      <Link href={url} className="block px-6 py-4">
+                      <Link
+                        href={url}
+                        className="block px-6 py-4"
+                        aria-label={`View ${metric.name} change details`}
+                      >
                         <span
                           className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-bold tabular-nums transition-colors ${metric.changePercent >= 0 ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive'}`}
                         >
@@ -104,7 +118,11 @@ export function MetricTable({ metrics }: { metrics: TableMetric[] }) {
 
                     {/* Category Cell */}
                     <td className="p-0">
-                      <Link href={url} className="block px-6 py-4">
+                      <Link
+                        href={url}
+                        className="block px-6 py-4"
+                        aria-label={`View ${metric.name} category details`}
+                      >
                         <span className="inline-flex items-center rounded-md border border-primary/20 bg-primary/[0.05] px-2 py-0.5 text-[10px] font-bold uppercase tracking-tight text-primary">
                           {metric.category || 'General'}
                         </span>

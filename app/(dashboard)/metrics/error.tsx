@@ -37,7 +37,7 @@ export default function Error({
           Try Refreshing
         </ActionButton>
 
-        <Link href="/">
+        <Link href="/" aria-label="Go back to the dashboard">
           <ActionButton className="bg-secondary/20 border-secondary/30">
             <Home className="h-4 w-4" />
             Back to Dashboard

@@ -29,10 +29,10 @@ export function Header() {
             <Image
               src="/logo.png"
               alt="Logo"
-              width={50}
-              height={50}
+              width={75}
+              height={75}
               priority
-              className="-ml-2.5 w-auto scale-150 rounded-lg"
+              className="-ml-2.5 rounded-lg"
             />
             <h1 className="hidden text-xl font-bold tracking-tight text-primary sm:block">
               InsightEdge
@@ -50,7 +50,7 @@ export function Header() {
                 width={30}
                 height={30}
                 priority
-                className="mx-1 w-auto rounded-lg"
+                className="mx-1 rounded-lg"
               />
               <span className="text-md font-bold text-primary">{userName}</span>
             </div>

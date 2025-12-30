@@ -26,7 +26,7 @@ export default function Error({
           Try Again
         </ActionButton>
 
-        <Link href="/">
+        <Link href="/" aria-label="Go back to the home page">
           <ActionButton className="bg-secondary/20 border-secondary/30">
             <Home className="h-4 w-4" />
             Go Home

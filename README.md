@@ -98,8 +98,8 @@ This project currently includes **intentional API failure points** to test resil
 - **Performance**: Automated bundle analysis and image optimization via Next.js `next/image`.
 
 ## **CI/CD**: GitHub Actions for automated build, test, and linting on every PR.
-<img width="1009" height="348" alt="image" src="https://github.com/user-attachments/assets/111580e8-007f-4b4a-8f0c-a1fc965c1b07" />
 
+<img width="1009" height="348" alt="image" src="https://github.com/user-attachments/assets/111580e8-007f-4b4a-8f0c-a1fc965c1b07" />
 
 ## Labeled Directory Tree
 

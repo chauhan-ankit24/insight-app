@@ -4,9 +4,16 @@ import React from 'react';
 interface ActionButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
   icon?: React.ElementType;
+  ariaLabel?: string;
 }
 
-export function ActionButton({ children, icon: Icon, className, ...props }: ActionButtonProps) {
+export function ActionButton({
+  children,
+  icon: Icon,
+  className,
+  ariaLabel,
+  ...props
+}: ActionButtonProps) {
   return (
     <button
       className={cn(
@@ -16,6 +23,7 @@ export function ActionButton({ children, icon: Icon, className, ...props }: Acti
         'shadow-button hover:shadow-button-hover',
         className
       )}
+      aria-label={ariaLabel}
       {...props}
     >
       {Icon && (

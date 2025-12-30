@@ -117,6 +117,7 @@ export function MetricsHeader({ metrics }: { metrics: TableMetric[] }) {
                   onClick={handleClear}
                   className="hover:bg-muted flex h-6 w-6 items-center justify-center rounded-full transition-colors"
                   type="button"
+                  aria-label="Clear search"
                 >
                   <X className="text-muted-foreground h-4 w-4 hover:text-foreground" />
                 </button>
