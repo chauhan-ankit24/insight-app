@@ -1,9 +1,9 @@
 import { formatCurrency, formatNumberCompact, formatPercentage } from '@/lib/utils/formatters';
 import { TableMetric } from '@/lib/data/resolvers';
-import { MicroTrendChart } from './MicroTrendChart';
 import { SearchX } from 'lucide-react';
 import Link from 'next/link';
 import { ROUTES } from '@/app/constants/routes';
+import { ClientMicroTrendChart } from './ChartContainer';
 
 export function MetricTable({ metrics }: { metrics: TableMetric[] }) {
   const hrefBuilder = (id: string) => `${ROUTES.DASHBOARD.METRICS}/${id}?grain=daily&range=30`;
@@ -90,7 +90,7 @@ export function MetricTable({ metrics }: { metrics: TableMetric[] }) {
                         aria-label={`View ${metric.name} trend chart`}
                       >
                         <div className="h-8 w-full opacity-80 transition-opacity group-hover:opacity-100">
-                          <MicroTrendChart
+                          <ClientMicroTrendChart
                             data={(metric.trendData || []).map((point) => ({
                               value: point.value,
                             }))}

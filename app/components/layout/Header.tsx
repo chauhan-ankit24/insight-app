@@ -34,9 +34,9 @@ export function Header() {
               priority
               className="-ml-2.5 rounded-lg"
             />
-            <h1 className="hidden text-xl font-bold tracking-tight text-primary sm:block">
+            <div className="hidden text-xl font-bold tracking-tight text-primary sm:block">
               InsightEdge
-            </h1>
+            </div>
           </div>
         </div>
 
@@ -50,13 +50,13 @@ export function Header() {
                 width={30}
                 height={30}
                 priority
-                className="mx-1 rounded-lg"
+                className="mx-1 rounded-lg object-cover"
               />
               <span className="text-md font-bold text-primary">{userName}</span>
             </div>
           )}
           <ThemeToggle />
-          <ActionButton onClick={logout} icon={LogOut}>
+          <ActionButton onClick={logout} icon={LogOut} aria-label="logout">
             <span className="hidden sm:inline">Logout</span>
           </ActionButton>
         </div>

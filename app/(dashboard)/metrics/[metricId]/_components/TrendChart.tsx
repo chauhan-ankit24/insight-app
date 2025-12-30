@@ -21,19 +21,19 @@ interface TrendPoint {
 
 export function TrendChart({ data }: { data: TrendPoint[] }) {
   const chartData = useMemo(() => data, [data]);
-  const isHighDensity = data.length > 20;
+  const isHighDensity = chartData.length > 20;
 
   const stats = useMemo(() => {
-    if (data.length === 0) return { avg: 0, isPositive: true };
-    const avg = data.reduce((acc, curr) => acc + curr.value, 0) / data.length;
-    const isPositive = data[data.length - 1].value >= data[0].value;
+    if (chartData.length === 0) return { avg: 0, isPositive: true };
+    const avg = chartData.reduce((acc, curr) => acc + curr.value, 0) / chartData.length;
+    const isPositive = chartData[chartData.length - 1].value >= chartData[0].value;
     return { avg, isPositive };
-  }, [data]);
+  }, [chartData]);
 
   const brandColor = stats.isPositive ? 'hsl(var(--success))' : 'hsl(var(--destructive))';
   const indigoColor = 'hsl(var(--primary))';
 
-  if (!data || data.length === 0) {
+  if (!chartData || chartData.length === 0) {
     return (
       <div className="border-muted/50 bg-muted/5 animate-in fade-in zoom-in-95 flex min-h-[400px] w-full flex-col items-center justify-center rounded-3xl border-2 border-dashed p-12 text-center duration-500">
         <div className="relative mb-6">

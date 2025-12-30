@@ -1,13 +1,13 @@
 import Link from 'next/link';
 import { getMetricById, getMetricContributors, getMetricTrend } from '@/lib/data/resolvers';
 import { InsightControls } from './_components/InsightControls';
-import { TrendChart } from './_components/TrendChart';
-import { ContributorsChart } from './_components/ContributorsChart';
 import { ChevronLeft, Tag, Folder } from 'lucide-react';
 import { formatDate } from '@/lib/utils/formatters';
 import { ROUTES } from '@/app/constants/routes';
 import { getStatusStyles } from '@/lib/utils/style-utils';
 import { Metadata } from 'next';
+
+import { ClientTrendChart, ClientContributorsChart } from './_components/ChartContainer';
 
 type Props = { params: Promise<{ metricId: string }> };
 
@@ -123,7 +123,7 @@ export default async function MetricDetailPage({
               Performance Trend
             </h3>
           </div>
-          <TrendChart
+          <ClientTrendChart
             data={
               trendData?.data.map((d) => ({
                 date: String(d.date),
@@ -140,7 +140,7 @@ export default async function MetricDetailPage({
               Contributors
             </h3>
           </div>
-          <ContributorsChart data={contributors.data} keys={contributors.keys} />
+          <ClientContributorsChart data={contributors.data} keys={contributors.keys} />
         </div>
       </div>
     </div>

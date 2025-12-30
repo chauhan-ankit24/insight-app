@@ -23,7 +23,7 @@ export function ActionButton({
         'shadow-button hover:shadow-button-hover',
         className
       )}
-      aria-label={ariaLabel}
+      aria-label={ariaLabel || 'button'}
       {...props}
     >
       {Icon && (

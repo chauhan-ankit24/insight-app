@@ -129,7 +129,7 @@ export function MetricsHeader({ metrics }: { metrics: TableMetric[] }) {
           <div className="flex gap-2">
             <ActionButton
               onClick={() => updatePath('filter', METRIC_FILTERS.ALL)}
-              className={`${currentFilter === METRIC_FILTERS.ALL ? 'bg-primary/20 text-primary' : 'text-muted-foreground bg-transparent hover:text-foreground'}`}
+              className={`${currentFilter === METRIC_FILTERS.ALL ? 'bg-primary text-background' : 'text-muted-foreground bg-transparent hover:text-foreground'}`}
             >
               <LayoutGrid className="h-3.5 w-3.5" />
               All
@@ -155,7 +155,7 @@ export function MetricsHeader({ metrics }: { metrics: TableMetric[] }) {
           <ActionButton
             onClick={handleExport}
             disabled={isExporting}
-            className="flex w-36 items-center justify-center bg-primary/70 text-primary-foreground hover:bg-primary/90 disabled:opacity-70"
+            className="flex w-36 items-center justify-center disabled:opacity-70"
           >
             {isExporting ? (
               <Loader2 className="h-4 w-4 animate-spin" />

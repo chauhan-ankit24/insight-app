@@ -1,19 +1,9 @@
-'use client';
 import { formatCurrency, formatNumberCompact } from '@/lib/utils/formatters';
 import { SummaryMetric } from '@/lib/data/resolvers';
 import Link from 'next/link';
 import { ROUTES } from '@/app/constants/routes';
 import { getTrendStyles, getStatusStyles } from '@/lib/utils/style-utils';
-
-import dynamic from 'next/dynamic';
-
-const DynamicMicroTrendChart = dynamic(
-  () => import('./MicroTrendChart').then((mod) => mod.MicroTrendChart),
-  {
-    ssr: false,
-    loading: () => <div className="bg-muted/10 h-10 w-24 animate-pulse rounded" />,
-  }
-);
+import { ClientMicroTrendChart } from './ChartContainer';
 
 export function SummaryCards({ metrics }: { metrics: SummaryMetric[] }) {
   return (
@@ -59,7 +49,7 @@ export function SummaryCards({ metrics }: { metrics: SummaryMetric[] }) {
                   </p>
                 </div>
                 <div className="mt-4 flex-1">
-                  <DynamicMicroTrendChart
+                  <ClientMicroTrendChart
                     data={metric.trendData?.map((d) => ({ value: d.value }))}
                     status={metric.status}
                   />

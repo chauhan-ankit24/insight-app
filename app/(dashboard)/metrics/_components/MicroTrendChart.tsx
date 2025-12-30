@@ -12,13 +12,14 @@ export function MicroTrendChart({
   data: { value: number }[];
   status: MetricStatus;
 }) {
+  const chartData = useMemo(() => data, [data]);
   const brandColor = useMemo(() => getStatusColor(status), [status]);
 
   // 2. Calculate Average
   const avgValue = useMemo(() => {
-    if (!data?.length) return 0;
-    return data.reduce((acc, curr) => acc + curr.value, 0) / data?.length;
-  }, [data]);
+    if (!chartData?.length) return 0;
+    return chartData.reduce((acc, curr) => acc + curr.value, 0) / chartData?.length;
+  }, [chartData]);
 
   return (
     <div
@@ -31,7 +32,7 @@ export function MicroTrendChart({
       }}
     >
       <ResponsiveContainer width="100%" height="100%" debounce={200}>
-        <AreaChart data={data} margin={{ top: 2, bottom: 2, left: 0, right: 0 }}>
+        <AreaChart data={chartData} margin={{ top: 2, bottom: 2, left: 0, right: 0 }}>
           <defs>
             <linearGradient id={`micro-grad-${status}`} x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor={brandColor} stopOpacity={0.25} />

@@ -2,7 +2,7 @@
 
 import { getIndexedChartStyle, resolveEntryColor } from '@/lib/utils/style-utils';
 import { SearchX } from 'lucide-react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   BarChart,
   Bar,
@@ -20,9 +20,11 @@ interface ContributorsChartProps {
 }
 
 export function ContributorsChart({ data, keys }: ContributorsChartProps) {
+  const chartData = useMemo(() => data, [data]);
+
   const [activeKey, setActiveKey] = useState<string | null>(null);
 
-  if (!data || data.length === 0) {
+  if (!chartData || chartData.length === 0) {
     return (
       <div className="border-muted/50 bg-muted/5 animate-in fade-in zoom-in-95 flex min-h-[400px] w-full flex-col items-center justify-center rounded-3xl border-2 border-dashed p-12 text-center duration-500">
         <div className="relative mb-6">
@@ -55,7 +57,7 @@ export function ContributorsChart({ data, keys }: ContributorsChartProps) {
       }}
     >
       <ResponsiveContainer width="100%" height="100%" debounce={200}>
-        <BarChart data={data} margin={{ top: 20, right: 10, left: 10, bottom: 0 }}>
+        <BarChart data={chartData} margin={{ top: 20, right: 10, left: 10, bottom: 0 }}>
           <defs>
             {keys.map((key, index) => {
               const { color, opacity } = getIndexedChartStyle(index);
