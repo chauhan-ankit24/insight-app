@@ -37,11 +37,11 @@ export function SummaryCards({ metrics }: { metrics: SummaryMetric[] }) {
               {/* Middle: Primary Value */}
               <div className="flex w-full flex-wrap justify-between gap-2">
                 <div>
-                  <h3 className="text-3xl font-black tracking-tight text-foreground">
+                  <div className="text-3xl font-black tracking-tight text-foreground">
                     {metric.unit === 'USD'
                       ? formatCurrency(metric.value)
                       : formatNumberCompact(metric.value)}
-                  </h3>
+                  </div>
                   <p
                     className={`${styles.text} mt-1 text-[10px] font-bold uppercase tracking-wider`}
                   >

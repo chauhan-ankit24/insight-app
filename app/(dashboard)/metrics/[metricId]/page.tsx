@@ -73,13 +73,13 @@ export default async function MetricDetailPage({
         <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
           <div className="space-y-2">
             <div className="flex items-center gap-3">
-              <h1 className="text-4xl font-black uppercase tracking-tight text-foreground">
+              <div className="text-4xl font-black uppercase tracking-tight text-foreground">
                 {metric.name}
-              </h1>
+              </div>
               <span
                 className={`rounded-full border px-2.5 py-0.5 text-[10px] font-bold uppercase ${
-                  statusInfo.pill
-                }`}
+                  statusInfo.bg
+                } text-background`}
               >
                 {metric.status}
               </span>
@@ -119,9 +119,9 @@ export default async function MetricDetailPage({
         {/* Main Performance Trend */}
         <div className="bg-card border-border rounded-3xl border p-6 lg:col-span-2">
           <div className="mb-4">
-            <h3 className="text-muted-foreground/80 text-sm font-bold uppercase tracking-widest">
+            <div className="text-muted-foreground/80 text-sm font-bold uppercase tracking-widest">
               Performance Trend
-            </h3>
+            </div>
           </div>
           <ClientTrendChart
             data={
@@ -136,9 +136,9 @@ export default async function MetricDetailPage({
         {/* Contributors Breakdown */}
         <div className="bg-card border-border rounded-3xl border p-6">
           <div className="mb-4">
-            <h3 className="text-muted-foreground/80 text-sm font-bold uppercase tracking-widest">
+            <div className="text-muted-foreground/80 text-sm font-bold uppercase tracking-widest">
               Contributors
-            </h3>
+            </div>
           </div>
           <ClientContributorsChart data={contributors.data} keys={contributors.keys} />
         </div>
